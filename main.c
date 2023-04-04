@@ -234,7 +234,6 @@ le noms des fichiers et répertoires qui s’y trouvent*/
 		while((ep=readdir(dp)) != NULL){
 			//printf("%hhu\t",ep->d_type);
 			//printf("%d\t",ep->d_type==8); 8=file
-			//printf("%s\n",ep->d_name);
 			cell = buildCell(ep->d_name);
 			insertFirst(l,cell);
 		}
@@ -293,6 +292,19 @@ char* hashToPath(char* hash){
 	}
 	return buffer_exit;
 }
+
+void blobFile2(char* file){
+	char* hash = sha256file(file); 
+	char* ch2 = strdup(hash); 
+	ch2[2] = '\0';
+if (!file_exists(ch2)) {
+	char buff [100];
+	sprintf(buff, "mkdir %s",ch2); 
+	system(buff);
+}
+	char* ch = hashToPath(hash);
+	cp(ch, file);
+}
 void blobFile(char* file){
 /*enregistre un instantané du fichier donné en entrée*/
 	char* hash = hashToPath(sha256file(file));
@@ -315,9 +327,10 @@ void blobFile(char* file){
 	// Finalement geré dans hashToPath
 	//hash[38]='\0';
 	sprintf(buff,"touch %s/%s",repertoire,hash+3);
-	sprintf(buff,"%s/%s",repertoire,hash+3);
+	system(buff);
+	//sprintf(buff,"%s/%s",repertoire,hash+3);
 	
-	cp(buff,file);
+	cp(hash,file);
 
 }
 
@@ -560,7 +573,7 @@ char* blobWorkTree(WorkTree* wt){
 	sprintf(buffSup,"rm %s",fname);
 	system(buffSup);
 
-	return hashPath;
+	return sha256file(fname);
 }
 
 
@@ -611,28 +624,49 @@ char* saveWorkTree(WorkTree* wt, char* path){
 	if(wt == NULL || wt->n<=0 ){ // Si pas d'élément dans tab
 		return NULL;
 	}
+	system("pwd");
+	printf("*$*$*$*$*$*$ %s\n",path);
+
+	printf("DEBUT WT =%s\n",wtts(wt));
 	
 	int i;
-	for(i=0; i<wt->size; i++){
+	printf("n =%d\n",wt->n);
+	for(i=0; i<wt->n; i++){
+		printf("i =%d\n",i);
 		printf("%s\n",wt->tab[i].name );
 		char* hash=malloc(sizeof(char)*255);
 		int mode;
-		if (isFile(wt->tab[i].name)==1){
+		if (isFile(conc(path,wt->tab[i].name))==1){
 			blobFile(wt->tab[i].name);
-			hash=hashToPath(wt->tab[i].name);
-			mode=getChmod(wt->tab[i].name);
+			hash=sha256file(conc(path,wt->tab[i].name));
+			mode=getChmod(conc(path,wt->tab[i].name));
 			wt->tab[i].mode=mode;
 			wt->tab[i].hash=hash;
+			printf("name %s \nmode %d \n hash %s \n",wt->tab[i].name,wt->tab[i].mode,wt->tab[i].hash);
 		}else{
 			WorkTree* newWT=initWorkTree();
-			List *L=listdir(wt->tab[i].name);
+			List *L=listdir(conc(path,wt->tab[i].name));
+			printf("LTOS =%s\n",ltos(L));
 			Cell *ptr = *L;
+			printf("WTTS %s\n",wtts(newWT));
+			int k = 0;
 			while(ptr!= NULL){
-				appendWorkTree(newWT,NULL,NULL,0);
+				printf("ici\n");
+				if(strncmp(ptr->data,".",1) != 0){
+					printf("la\n");
+					printf("k =%d\n",k);
+					k++;
+					printf("%s\n",ptr->data);
+					appendWorkTree(newWT,ptr->data,"lalal",0);
+				}
 				ptr=ptr->next;
+				
 			}
-			
-			
+			printf("fin boucle\n");
+
+			char buff[255];
+			sprintf(buff,"cd %s",wt->tab[i].name);
+			system(buff);
 			wt->tab[i].hash = saveWorkTree(newWT,conc(path,wt->tab[i].name));
 			wt->tab[i].mode = getChmod(conc(path,wt->tab[i].name));
 	}
@@ -732,9 +766,10 @@ int main(int argc, char** argv){
 
 	//cp("cp_function","main.c");
 
-	printf("%s\n",hashToPath(sha256file(argv[1])));
+	printf("%s\n",hashToPath(sha256file(argv[1])));*/
 	
-	blobFile(argv[1]);*/
+	//cp("./test",argv[1]);
+	
 
 
 /* PARTIE 2 */
@@ -761,7 +796,7 @@ int main(int argc, char** argv){
 	printf("%s\n",wtts(wt));
 
 	printf("*$*$*$*$*$*$*$*$*$\n");
-	WorkTree* wt2 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nhash90	929é94949494949494949	92\n\nkr\nlkfne");
+	WorkTree* wt2 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é66949494949494949	92\n\nkr\nlkfne");
 	//WorkTree* wt2 = stwt(wtts(wt));
 	printf("*$*$*$*$*$*$*$*$*$\n");
 
@@ -784,7 +819,12 @@ int main(int argc, char** argv){
 
 
 	printf("%d\n",isFile(".git,kl"));
-	saveWorkTree(wt2,"e1");
+	List* l4 = listdir("./rep1");
+	printf("%s\n",ltos(l4));
+
+
+
+	saveWorkTree(wt2,".");
 
 
 
