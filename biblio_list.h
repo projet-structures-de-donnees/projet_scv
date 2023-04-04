@@ -30,6 +30,7 @@ List* ftol(char* path);
 
 /*EX 3*/
 List* listdir(char* root_dir);
+int file_exists2 (char *file);
 int file_exists(char *file);
 void cp(char *to, char *from);
 char* hashToPath(char* hash);

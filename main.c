@@ -137,7 +137,7 @@ Cell* searchList(List* L, char* str){
 		}
 		ptr = ptr->next;
 	}
-	printf("contenue non existant\n");
+	//printf("contenue non existant\n");
 	return NULL;
 } 
 
@@ -251,19 +251,35 @@ répertoire courant et 0 sinon*/
 	return 0;
 
 }
+/*La fonction file_exists ne trouve pas les fichiers qui ne sont pas dans le
+repertoire courant*/
+int file_exists2 (char *file) { 
+	struct stat buffer;
+	return (stat (file, &buffer) == 0);
+}
 
 void cp(char *to, char *from){
 /*copie le contenu d’un fichier vers un autre, en faisant 
 une lecture ligne par ligne du fichier source*/	
-	if(! file_exists(from)){
+
+	char buff_print[255];
+	sprintf(buff_print,"cat %s",from);
+	printf("%s\n",buff_print);
+	system(buff_print);
+
+	if(! file_exists2(from)){
+		printf("Sortie -- 1\n");
 		return;
 	}
 	FILE* f_from = fopen(from,"r");
 	FILE* f_to = fopen(to,"w");
 	if((f_from == NULL) || (f_to == NULL)){
 		//printf("Usage cp : Probleme FILE*\n");
+		printf("Sortie -- 2\n");
 		return ;
 	}
+
+
 
 	char buffer[256];
 
@@ -569,11 +585,15 @@ char* blobWorkTree(WorkTree* wt){
 	
 	cp(chemin,fname);
 
+
+	char* hash = sha256file(fname);
+
 	char buffSup[1500];
 	sprintf(buffSup,"rm %s",fname);
 	system(buffSup);
 
-	return sha256file(fname);
+
+	return hash;
 }
 
 
@@ -625,7 +645,7 @@ char* saveWorkTree(WorkTree* wt, char* path){
 		return NULL;
 	}
 	system("pwd");
-	printf("*$*$*$*$*$*$ %s\n",path);
+	printf("path =%s\n",path);
 
 	printf("DEBUT WT =%s\n",wtts(wt));
 	
@@ -633,11 +653,11 @@ char* saveWorkTree(WorkTree* wt, char* path){
 	printf("n =%d\n",wt->n);
 	for(i=0; i<wt->n; i++){
 		printf("i =%d\n",i);
-		printf("%s\n",wt->tab[i].name );
+		printf("nom courant =%s\n",wt->tab[i].name );
 		char* hash=malloc(sizeof(char)*255);
 		int mode;
 		if (isFile(conc(path,wt->tab[i].name))==1){
-			blobFile(wt->tab[i].name);
+			blobFile(conc(path,wt->tab[i].name));
 			hash=sha256file(conc(path,wt->tab[i].name));
 			mode=getChmod(conc(path,wt->tab[i].name));
 			wt->tab[i].mode=mode;
@@ -664,12 +684,9 @@ char* saveWorkTree(WorkTree* wt, char* path){
 			}
 			printf("fin boucle\n");
 
-			char buff[255];
-			sprintf(buff,"cd %s",wt->tab[i].name);
-			system(buff);
 			wt->tab[i].hash = saveWorkTree(newWT,conc(path,wt->tab[i].name));
 			wt->tab[i].mode = getChmod(conc(path,wt->tab[i].name));
-	}
+		}
 
 	}
 		return blobWorkTree(wt) ;

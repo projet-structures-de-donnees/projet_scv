@@ -107,7 +107,15 @@ int main(int argc, char** argv){
 	printf("%s\n",hashToPath(sha256file(argv[1])));*/
 	
 	//cp("./test",argv[1]);
-	
+
+	/*blobFile(argv[1]);
+
+
+    blobFile("./Makefile");
+    blobFile("./essay.c");*/
+
+    printf("FILE_EXISTS  = %d\n",file_exists2("./rep1/file1.txt"));
+    printf("FILE_EXISTS  = %d\n",file_exists("./rep1/file1.txt"));
 
 
 /* PARTIE 2 */
@@ -134,7 +142,7 @@ int main(int argc, char** argv){
 	printf("%s\n",wtts(wt));
 
 	printf("*$*$*$*$*$*$*$*$*$\n");
-	WorkTree* wt2 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é66949494949494949	92\n\nkr\nlkfne");
+	WorkTree* wt2 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é669494949494    94\n\nkr\nlkfne");
 	//WorkTree* wt2 = stwt(wtts(wt));
 	printf("*$*$*$*$*$*$*$*$*$\n");
 
@@ -149,16 +157,16 @@ int main(int argc, char** argv){
 
 	//printf("%s\n",blobWorkTree(wt2));
 
-	printf("%d\n",getChmod("MakeFile"));
-	printf("%d\n",getChmod("main"));
-	printf("%d\n",getChmod("main.c"));
-	printf("%d\n",getChmod("6a"));
+	//printf("%d\n",getChmod("MakeFile"));
+	//printf("%d\n",getChmod("main"));
+	//printf("%d\n",getChmod("main.c"));
+	//printf("%d\n",getChmod("6a"));
 
 
 
-	printf("%d\n",isFile(".git,kl"));
-	List* l4 = listdir("./rep1");
-	printf("%s\n",ltos(l4));
+	//printf("%d\n",isFile(".git,kl"));
+	//List* l4 = listdir("./rep1");
+	//printf("%s\n",ltos(l4));
 
 
 
