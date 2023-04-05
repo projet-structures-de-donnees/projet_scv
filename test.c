@@ -168,9 +168,11 @@ int main(int argc, char** argv){
 	//List* l4 = listdir("./rep1");
 	//printf("%s\n",ltos(l4));
 
-
+	//WorkTree* wt3 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é669494949494.t    94\n\nkr\nlkfne");
+	//WorkTree* wt3 = ftwt("da/07cbed13a56810980f728c06425bad3caad280.t");
 
 	saveWorkTree(wt2,".");
+	//restoreWorkTree(wt3, ".");
 
 
 

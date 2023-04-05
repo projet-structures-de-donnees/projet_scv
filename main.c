@@ -555,6 +555,12 @@ int getChmod(const char *path){
 		 other*/
 }
 
+void setMode(int mode, char* path){
+	char buff[100];
+	sprintf(buff,"chmod %d %s", mode, path);
+	system(buff);
+}
+
 char* blobWorkTree(WorkTree* wt){
 
 	static char template[] = "myfileXXXXXX";
@@ -563,7 +569,11 @@ char* blobWorkTree(WorkTree* wt){
 	mkstemp(fname);
 
 	wttf(wt,fname);
-	char* hashPath = hashToPath(sha256file(fname));
+	char* hash = sha256file(fname);
+	char* hashPath = hashToPath(hash);
+	char* hash_return = malloc(sizeof(char)*255);
+	sprintf(hash_return,"%s.t",hash);
+
 
 	char repertoire[3];
 	repertoire[0]=hashPath[0];
@@ -586,14 +596,14 @@ char* blobWorkTree(WorkTree* wt){
 	cp(chemin,fname);
 
 
-	char* hash = sha256file(fname);
+	//char* hash = sha256file(fname);
 
 	char buffSup[1500];
 	sprintf(buffSup,"rm %s",fname);
 	system(buffSup);
 
 
-	return hash;
+	return hash_return;
 }
 
 
@@ -640,15 +650,12 @@ char * conc(char* char1, char* char2){
 }	
 
 char* saveWorkTree(WorkTree* wt, char* path){
-
 	if(wt == NULL || wt->n<=0 ){ // Si pas d'élément dans tab
 		return NULL;
 	}
-	system("pwd");
-	printf("path =%s\n",path);
-
-	printf("DEBUT WT =%s\n",wtts(wt));
-	
+	//system("pwd");
+	//printf("path =%s\n",path);
+	//printf("DEBUT WT =%s\n",wtts(wt));
 	int i;
 	printf("n =%d\n",wt->n);
 	for(i=0; i<wt->n; i++){
@@ -666,29 +673,39 @@ char* saveWorkTree(WorkTree* wt, char* path){
 		}else{
 			WorkTree* newWT=initWorkTree();
 			List *L=listdir(conc(path,wt->tab[i].name));
-			printf("LTOS =%s\n",ltos(L));
 			Cell *ptr = *L;
-			printf("WTTS %s\n",wtts(newWT));
 			int k = 0;
 			while(ptr!= NULL){
-				printf("ici\n");
 				if(strncmp(ptr->data,".",1) != 0){
-					printf("la\n");
-					printf("k =%d\n",k);
-					k++;
 					printf("%s\n",ptr->data);
 					appendWorkTree(newWT,ptr->data,"lalal",0);
 				}
 				ptr=ptr->next;
-				
 			}
-			printf("fin boucle\n");
-
 			wt->tab[i].hash = saveWorkTree(newWT,conc(path,wt->tab[i].name));
 			wt->tab[i].mode = getChmod(conc(path,wt->tab[i].name));
 		}
-
 	}
 		return blobWorkTree(wt) ;
 }
+void restoreWorkTree(WorkTree* wt, char* path){
+	if(wt == NULL || wt->n<=0 ){ // Si pas d'élément dans tab
+		return ;
+	}
 
+	WorkFile* wf_current = NULL;
+	int i;
+	for (i = 0; i < wt->n; i++){
+		wf_current = &(wt->tab[i]);
+		int nb_char = strlen(wf_current->hash);
+		if(wf_current->hash[nb_char-2] != '.'){// S'il sagit d'un fichier
+			cp(conc(path,wf_current->name),hashToPath(wf_current->hash));
+			setMode(wf_current->mode,conc(path,wf_current->name));
+
+		}else{
+			WorkTree* newWT = ftwt(hashToPath(wf_current->hash));
+			restoreWorkTree(newWT,conc(path,wf_current->name));
+		}
+
+	}
+}
