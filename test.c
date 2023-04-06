@@ -155,7 +155,7 @@ int main(int argc, char** argv){
 	printf("%s\n",wtts(workT));
 
 
-	printf("%s\n",blobWorkTree(wt2));
+	//printf("%s\n",blobWorkTree(wt2));
 
 	//printf("%d\n",getChmod("MakeFile"));
 	//printf("%d\n",getChmod("main"));
@@ -212,5 +212,12 @@ int main(int argc, char** argv){
 		printf("%s\n",kvts(commit->T[i]));
 	}
 
+	char *value = commitGet(commit, "cl5");
+	if (value != NULL){
+		printf("%s",value);
+	}else{
+		printf("Pas trouvéééééééé\n");
+	}
+	
 	return 0;
 }

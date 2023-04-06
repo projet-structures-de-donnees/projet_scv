@@ -794,9 +794,10 @@ void commitSet(Commit* c, char* key, char* value){
 	int nb_commit = c->n;
 	kvp* k = createKeyVal(key, value);
 	unsigned long hash = sdbm(key);
+	unsigned long probing_line;
 	int i = 0;
 	while(nb_commit == c->n){
-		unsigned long probing_line = (hash + i)%c->size ;
+		probing_line = (hash + i)%c->size ;
 		printf("i =%d\n",i);
 		//printf("hash + %lu modulo %d=%lu\n",i,c->size,(hash + i)%c->size);
 		// Si la case et vide -> on insert
@@ -819,9 +820,24 @@ Commit *createCommit(char* hash){
 	commitSet(c, "tree",hash);
 	return c;
 }
-/*char* commitGet(Commit* c, char* key){
-	
+char* commitGet(Commit* c, char* key){
+	if(c == NULL){
+		return NULL;
+	}
 	unsigned long hash = sdbm(key);
-	
-	
-}*/
+	unsigned long probing_line;
+	int i = 0;
+	while (i < c->size){
+		printf("%lu\n", probing_line);
+		probing_line = (hash + i)%c->size ;
+		if(strcmp(c->T[probing_line]->key, key) == 0){
+			printf("fun =%s\n",c->T[probing_line]->key);
+			return c->T[probing_line]->value;
+		}
+		if (c->T[probing_line] == NULL){
+			return NULL;
+		}
+		i++;
+	}
+	return NULL;
+}
