@@ -13,7 +13,7 @@
 #include <errno.h>//pour isFile
 #define TAILLE_MAX_DATA 255
 #define SIZE_MAX_WORKTREE 100
-#define SIZE_COMMIT 255
+#define SIZE_COMMIT 10
 
 
 /*Exercice 1*/
@@ -765,6 +765,10 @@ Commit* initCommit(){
 	commit->size = SIZE_COMMIT;
 	commit->n = 0;
 	commit->T = (kvp**)malloc(sizeof(kvp*)*commit->size);
+	int i;
+	for (i=0; i<commit->n; i++){
+		commit->T[i] = NULL;
+	}
 	return commit;
 }
 
@@ -781,6 +785,43 @@ char *str;
    return hash;
 }
 void commitSet(Commit* c, char* key, char* value){
-
-
+	if (c == NULL){
+		return;
+	}
+	if(c->n == c->size){//tableau remplie
+		return;
+	}
+	int nb_commit = c->n;
+	kvp* k = createKeyVal(key, value);
+	unsigned long hash = sdbm(key);
+	int i = 0;
+	while(nb_commit == c->n){
+		unsigned long probing_line = (hash + i)%c->size ;
+		printf("i =%d\n",i);
+		//printf("hash + %lu modulo %d=%lu\n",i,c->size,(hash + i)%c->size);
+		// Si la case et vide -> on insert
+		if(c->T[probing_line] == NULL ){
+			c->T[probing_line] = k;
+			//printf("CommitSet =%s\n",kvts(c->T[(hash + i)%c->size]));
+			//printf("A la position =%lu\n",(hash + i)%c->size);
+			c->n++;
+		}else{
+			// Si la case n'est pas vide mais qu'ils ont la meme clé, on met a jours. Mais on augmente pas le nombre d'éléments du tableau
+			if (strcmp((c->T[probing_line])->key,key)==0){
+				c->T[probing_line] = k;
+			}
+		}
+		i++;
+	}
 }
+Commit *createCommit(char* hash){
+	Commit *c = initCommit();
+	commitSet(c, "tree",hash);
+	return c;
+}
+/*char* commitGet(Commit* c, char* key){
+	
+	unsigned long hash = sdbm(key);
+	
+	
+}*/

@@ -155,7 +155,7 @@ int main(int argc, char** argv){
 	printf("%s\n",wtts(workT));
 
 
-	//printf("%s\n",blobWorkTree(wt2));
+	printf("%s\n",blobWorkTree(wt2));
 
 	//printf("%d\n",getChmod("MakeFile"));
 	//printf("%d\n",getChmod("main"));
@@ -185,6 +185,32 @@ int main(int argc, char** argv){
 	printf("%s \n%s\n",k2->key,k2->value);
 	char* data = "fdfgsdhfsdfs445d4fsd7fg/*/+bfrsdgf$";
 	printf("%lu\n",sdbm(data)%255);
+	
+	char* data1 = ("clé1");
+	int b = (sdbm(data1)+0)%10;
+	printf("%d\n",b);
+
+	Commit *commit = createCommit("hash_de_tree") ;
+	commitSet(commit, "clé1", "valeur1");
+	commitSet(commit, "cle2", "valeur2");
+	commitSet(commit, "cle3", "valeur3");
+	commitSet(commit, "cle4", "valeur4");
+	commitSet(commit, "cle5", "valeur5");
+	commitSet(commit, "cle6", "valeur6");
+	commitSet(commit, "cle7", "valeur7");
+	commitSet(commit, "cle8", "valeur7");
+	commitSet(commit, "cle9", "valeur7");
+	commitSet(commit, "cle10", "valeur7");
+	commitSet(commit, "cle11", "valeur7");
+	commitSet(commit, "cltecle", "valeur7");
+	commitSet(commit, "certecle", "valeur7");
+	commitSet(commit, "clgrtkecle", "valeur7");
+	commitSet(commit, "clgtegecle", "valeur7");
+
+
+	for (int i = 0; i<commit->size; i++){
+		printf("%s\n",kvts(commit->T[i]));
+	}
 
 	return 0;
 }
