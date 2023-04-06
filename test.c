@@ -171,10 +171,20 @@ int main(int argc, char** argv){
 	//WorkTree* wt3 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é669494949494.t    94\n\nkr\nlkfne");
 	//WorkTree* wt3 = ftwt("da/07cbed13a56810980f728c06425bad3caad280.t");
 
-	saveWorkTree(wt2,".");
+	//saveWorkTree(wt2,".");
 	//restoreWorkTree(wt3, ".");
 
 
+
+/* PARTIE 3 */
+	printf("\n\n *$*$*$*$*$*$*$*$* PARTIE 3 *$ *$*$*$*$*$*$*$* \n");
+	kvp *k =createKeyVal("clé1","valeur1");
+	printf("%s\n", kvts(k));
+
+	kvp* k2 = stkv("valeur2 :clénumber2");
+	printf("%s \n%s\n",k2->key,k2->value);
+	char* data = "fdfgsdhfsdfs445d4fsd7fg/*/+bfrsdgf$";
+	printf("%lu\n",sdbm(data)%255);
 
 	return 0;
 }

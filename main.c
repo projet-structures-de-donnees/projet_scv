@@ -13,6 +13,7 @@
 #include <errno.h>//pour isFile
 #define TAILLE_MAX_DATA 255
 #define SIZE_MAX_WORKTREE 100
+#define SIZE_COMMIT 255
 
 
 /*Exercice 1*/
@@ -708,4 +709,78 @@ void restoreWorkTree(WorkTree* wt, char* path){
 		}
 
 	}
+}
+/* --------------------- PARTIE 3 --------------------- */
+kvp* createKeyVal(char* key, char* val){
+/* permettant d’allouer et d’initialiser un  élément. */	
+	kvp *keyVal = (kvp*)malloc(sizeof(kvp));
+	if (keyVal == NULL){
+		printf("Erreur allocation kvp : \n%s %s",key,val);
+		return NULL;
+	}
+	
+	keyVal->key=strdup(key);
+	keyVal->value=strdup(val);
+	return keyVal;
+}
+
+void freeKeyVal(kvp* kv){
+/* permettant de libérer la mémoire associé à un  élément. */
+	if(kv == NULL){
+		return ;
+	}
+	free(kv->key);
+	free(kv->value);
+	free(kv);
+}
+
+char* kvts(kvp* k){
+/* permet de convertir un élément en une chaine de 
+caractères de la forme "clé :valeur" */
+	if(k == NULL){
+		return NULL;
+	}
+	char *chaine = (char *)malloc(sizeof(char)*255);
+	sprintf(chaine,"%s :%s",k->key,k->value);
+	return chaine;
+}
+
+kvp* stkv(char* str){
+	if(str == NULL){
+		return NULL;
+	}
+	char key[255];
+	char value[255];
+	sscanf(str,"%s :%s",key, value);
+	kvp *k = createKeyVal(key,value);
+	return k;
+}
+
+Commit* initCommit(){
+	Commit *commit = (Commit*)malloc(sizeof(Commit));
+	if(commit == NULL){
+		printf("Erreur allocation Commit");
+		return NULL;
+	}
+	commit->size = SIZE_COMMIT;
+	commit->n = 0;
+	commit->T = (kvp**)malloc(sizeof(kvp*)*commit->size);
+	return commit;
+}
+
+//static unsigned long sdbm(unsigned char *str)
+static unsigned long
+sdbm(str)
+char *str;
+{
+    unsigned long hash = 0;
+    int c;
+    while ((c = *str++))
+        hash = c + (hash << 6) + (hash << 16) - hash;
+
+   return hash;
+}
+void commitSet(Commit* c, char* key, char* value){
+
+
 }
