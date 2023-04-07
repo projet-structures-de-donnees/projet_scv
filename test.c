@@ -229,5 +229,7 @@ int main(int argc, char** argv){
 		printf("%s\n",kvts(cmt1->T[i]));
 	}
 
+	ctf(commit,"test_vers_file.txt");
+
 	return 0;
 }

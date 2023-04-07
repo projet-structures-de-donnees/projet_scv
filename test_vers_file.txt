@@ -1,0 +1,10 @@
+cle3 :valeur3
+cle4 :valeur4
+clé1 :valeur1
+cle5 :valeur5
+cle6 :valeur6
+cle7 :valeur7
+cle8 :valeur7
+cle9 :valeur7
+tree :hash_de_tree
+cle2 :valeur2

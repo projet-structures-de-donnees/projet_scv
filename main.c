@@ -901,3 +901,25 @@ Commit* stc(char* ch){
 		}
 	return commit;
 }
+
+void ctf(Commit* c, char* file){
+	if (c == NULL){
+		return ;
+	}
+	FILE *f = fopen(file,"w");
+	if(f == NULL){
+		return ;
+	}
+	int i = 0;
+	int trouve = 0;
+	// On s'arrete si on a finit de parcourirs la table ou si on a trouvé toutes les valeurs
+	while(i < c->size || trouve < c->n){
+		if (c->T[i] != NULL){
+			fprintf(f,"%s :%s\n",c->T[i]->key,c->T[i]->value);
+			printf("%d\n",i);
+			trouve ++;
+		}
+		i++;
+	}
+	fclose(f);
+}
