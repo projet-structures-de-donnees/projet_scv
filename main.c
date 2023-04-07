@@ -751,7 +751,12 @@ kvp* stkv(char* str){
 	}
 	char key[255];
 	char value[255];
-	sscanf(str,"%s :%s",key, value);
+	printf("stkv =%s\t",str);
+	if (sscanf(str,"%s :%s",key, value) != 2){
+		printf("NON VALIDE\n");
+		return NULL;
+	}
+	printf("VALIDE\n");
 	kvp *k = createKeyVal(key,value);
 	return k;
 }
@@ -810,10 +815,16 @@ void commitSet(Commit* c, char* key, char* value){
 			// Si la case n'est pas vide mais qu'ils ont la meme clé, on met a jours. Mais on augmente pas le nombre d'éléments du tableau
 			if (strcmp((c->T[probing_line])->key,key)==0){
 				c->T[probing_line] = k;
+				return ;
 			}
 		}
 		i++;
 	}
+
+	for (int i = 0; i<c->size; i++){
+		printf("%s\n",kvts(c->T[i]));
+	}
+
 }
 Commit *createCommit(char* hash){
 	Commit *c = initCommit();
@@ -840,4 +851,53 @@ char* commitGet(Commit* c, char* key){
 		i++;
 	}
 	return NULL;
+}
+
+char* cts(Commit* c){
+	if(c == NULL){
+		return NULL;
+	}
+	int nb_recup = 0;
+	char *buff = (char *)malloc(sizeof(char)*255*c->n);
+	int i = 0;
+	// Tant qu'on a pas parcouru toute la table ou que nous avons tous recupéré
+	while(i<c->size || (nb_recup < c->n)){
+		if(c->T[i] != NULL){
+			strcat(buff,kvts(c->T[i]));
+			strcat(buff,"\n");
+			nb_recup ++;
+		}
+		i++;
+	}
+	return buff;
+}
+
+Commit* stc(char* ch){
+	if(ch == NULL){
+		return NULL;
+	}
+	Commit *commit = initCommit();
+	char* begin = ch;
+	char* end = strstr(ch,"\n");
+	char* buff_word = malloc(sizeof(char)*500);
+	int size_word;
+	kvp* kv = NULL;
+	while(end != NULL){
+		size_word = strlen(begin)-strlen(end); 
+		strncpy(buff_word,begin,size_word);
+		buff_word[size_word]='\0';// Si la nouvelle chaine recupéré est plus petite que la précédente
+		printf("buff_word =%s\n",buff_word);
+		kv = stkv(buff_word);
+		if(kv != NULL){// Si buff_word est dans le bon format 
+			commitSet(commit,kv->key, kv->value);
+		}
+		begin = end+1;
+		end = strstr(begin,"\n");
+	}
+	//Pour la fin de la chaine
+	kv = stkv(begin);
+		if(kv != NULL){
+			commitSet(commit,kv->key, kv->value);
+		}
+	return commit;
 }

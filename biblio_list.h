@@ -104,7 +104,9 @@ void commitSet(Commit* c, char* key, char* value);
 Commit* createCommit(char* hash);
 char* commitGet(Commit* c, char* key);
 char* cts(Commit* c);
+Commit* stc(char* ch);
 void ctf(Commit* c, char* file);
+Commit* ftc(char* file);
 char* blobCommit(Commit* c);
 
 #endif

@@ -218,6 +218,16 @@ int main(int argc, char** argv){
 	}else{
 		printf("Pas trouvéééééééé\n");
 	}
+
+	printf("%s\n",cts(commit));
+
+	Commit* cmt1 = stc("prmclé :valeeurr1\nddxmeecllé :val222222\neof\n\n,oe\nddxmeecllé :val9999\ncle3 :val3\ncle3 :val0000");
 	
+	printf("\n\n%s\n",cts(cmt1));
+
+	for (int i = 0; i<cmt1->size; i++){
+		printf("%s\n",kvts(cmt1->T[i]));
+	}
+
 	return 0;
 }
