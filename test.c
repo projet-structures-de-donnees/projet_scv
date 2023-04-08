@@ -236,16 +236,25 @@ int main(int argc, char** argv){
 	printf("\n%s\n",blobCommit(commit));
 	
 	/* Exercice 7 – Gestion temporelle des commits de manière linéire */
-	createUpdateRef("HEAD", "hash_suivie_par_HEAD");
-	createUpdateRef("master", "hash_suivie_par_master");
-	createUpdateRef("develop", "hash_suivie_par_develop");
+	//createUpdateRef("HEAD", "hash_suivie_par_HEAD");
+	//createUpdateRef("master", "hash_suivie_par_master");
+	//createUpdateRef("develop", "hash_suivie_par_develop");
 	//deleteRef("develop");
-	printf("DEBUT:%s:FIN\n",getRef("HEAD"));
-	printf("DEBUT:%s:FIN\n",getRef("master"));
-	printf("DEBUT:%s:FIN\n",getRef("develop"));
+	//printf("DEBUT:%s:FIN\n",getRef("HEAD"));
+	//printf("DEBUT:%s:FIN\n",getRef("master"));
+	//printf("DEBUT:%s:FIN\n",getRef("develop"));
 
-	myGitAdd("file.txt");
+	//myGitAdd("file.txt");
+	//myGitAdd("Makefile");
+	printf("*¨$`ù^$`ù^$`ù^----------ù^$``^$`$`^$^$-------\n");
+	char* t = "HALLOWEEN";
+
+	createKeyVal("tree","HALLO");
+	initRefs();
 	myGitAdd("Makefile");
+	myGitCommit("master", "début C'est un test de message de commit pour faire des test skiuuuuu");
+
+
 
 	return 0;
 }

@@ -119,6 +119,7 @@ char* getRef(char* ref_name);
 /* SIMULATION DE LA COMMANDE GIT ADD */
 void myGitAdd(char* file_or_folder);
 
-
+/* SIMULATION DE LA COMMANDE GIT COMMIT */
+void myGitCommit(char* branch_name, char* message);
 
 #endif

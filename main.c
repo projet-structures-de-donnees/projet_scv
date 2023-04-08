@@ -527,6 +527,9 @@ int wttf(WorkTree* wt, char* file){
 
 WorkTree* ftwt(char* file){
 	FILE* f = fopen(file,"r");
+	if (f == NULL){
+		return ;
+	}
 	char content_buff[255];
 	char name[255];
 	char hash[255];
@@ -721,9 +724,11 @@ kvp* createKeyVal(char* key, char* val){
 		printf("Erreur allocation kvp : \n%s %s",key,val);
 		return NULL;
 	}
-	
+	//printf("%s -- %s\n",key,val);
 	keyVal->key=strdup(key);
 	keyVal->value=strdup(val);
+	//printf("BONJOUR\n");
+	printf("%s\n",kvts(keyVal));
 	return keyVal;
 }
 
@@ -794,13 +799,16 @@ char *str;
 }
 void commitSet(Commit* c, char* key, char* value){
 	if (c == NULL){
+		printf("parm c == NULL\n");
 		return;
 	}
 	if(c->n == c->size){//tableau remplie
+		printf("REMPLI\n");
 		return;
 	}
 	int nb_commit = c->n;
 	kvp* k = createKeyVal(key, value);
+	printf("LA\n");
 	unsigned long hash = sdbm(key);
 	unsigned long probing_line;
 	int i = 0;
@@ -831,6 +839,9 @@ void commitSet(Commit* c, char* key, char* value){
 }
 Commit *createCommit(char* hash){
 	Commit *c = initCommit();
+	if(c == NULL){
+		return;
+	}
 	commitSet(c, "tree",hash);
 	return c;
 }
@@ -1070,7 +1081,6 @@ char* getRef(char* ref_name){
 
 /* SIMULATION DE LA COMMANDE GIT ADD */
 void myGitAdd(char* file_or_folder){
-	printf("RENTRER\n");
 	if(file_or_folder == NULL){
 		return;
 	}
@@ -1083,13 +1093,9 @@ void myGitAdd(char* file_or_folder){
 			if(f != NULL){
 				printf(".add a été créer\n");
 				wt = initWorkTree();
-				printf("LA\n");
 				appendWorkTree(wt,file_or_folder,"hash_test",0);
-				printf("PAS\n");
 				fclose(f);
-				printf("POO\n");
 				wttf(wt, ".add");
-				printf("APA\n");
 			}
 			return;
 		}else{ //Erreur fopen
@@ -1102,4 +1108,49 @@ void myGitAdd(char* file_or_folder){
         fclose(f);
 		wttf(wt, ".add");
     }
+}
+/* SIMULATION DE LA COMMANDE GIT COMMIT */
+void myGitCommit(char* branch_name, char* message){
+	DIR* dir = opendir(".refs");
+	if(dir == NULL){ 
+		printf("Initialiser d'abord les références du projet\n");
+		return;
+	}
+	char buff_branch[255];
+	sprintf(buff_branch,".refs/%s",branch_name);
+	FILE* f = fopen(buff_branch,"r");
+	if(f == NULL){
+		printf("La branche n’existe pas\n");
+		return;
+	}
+	if(strcmp(getRef("HEAD"),getRef(branch_name)) != 0){
+		printf("HEAD doit pointer sur le dernier commit de la branche\n");
+		return;
+	}
+	fclose(f);
+	WorkTree* wt = ftwt(".add");
+	if(wt == NULL){
+		return;
+	}
+	if(remove(".add") == 0){
+		//printf(".add a ete supprimé !!! \n");
+	}else{
+		//printf(".add n'a pas ete supprimé !!! \n");
+		return ;
+	}
+	char* hash_wt = saveWorkTree(wt, ".");
+	if(hash_wt == NULL){
+		return ;
+	}
+	Commit *c = createCommit(hash_wt);
+	char *predecessor = getRef(branch_name);
+	if(strcmp(predecessor," ") != 0){
+		commitSet(c, "predecessor", predecessor);
+	}
+	if(message != NULL){
+		commitSet(c, "message", message);
+	}
+	char *hash_commit = blobCommit(c);
+	createUpdateRef(branch_name, hash_commit);
+	createUpdateRef("HEAD", hash_commit);
 }
