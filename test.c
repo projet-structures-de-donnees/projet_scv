@@ -229,7 +229,10 @@ int main(int argc, char** argv){
 		printf("%s\n",kvts(cmt1->T[i]));
 	}
 
-	ctf(commit,"test_vers_file.txt");
+	//ctf(commit,"test_vers_file.txt");
+
+	Commit* commit_f = ftc("test_vers_file.txt");
+	printf("\n\n%s\n",cts(commit_f));
 
 	return 0;
 }

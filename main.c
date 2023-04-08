@@ -923,3 +923,25 @@ void ctf(Commit* c, char* file){
 	}
 	fclose(f);
 }
+
+Commit* ftc(char* file){
+	if(file == NULL){
+		return NULL;
+	}
+	FILE* f = fopen(file,"r");
+	if(f == NULL){
+		return NULL;
+	}
+	
+	Commit *c = initCommit();
+	char key[255];
+	char value[255];
+	char buff[255];
+	while(fgets(buff,255,f) != NULL){
+		if (sscanf(buff,"%s :%s",key,value) == 2){
+		commitSet(c,key,value);
+		}
+	}
+	return c;
+	fclose(f);
+}
