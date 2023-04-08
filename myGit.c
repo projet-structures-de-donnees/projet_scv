@@ -20,7 +20,17 @@
 
 int main(int argc, char** argv){
     if(argc < 2){
-        printf("Il faut des paramètres\n");
+        printf("\tmyGit init\n");
+        printf("\tmyGit list-refs\n");
+        printf("\tmyGit create-ref <name> <hash>\n");
+        printf("\tmyGit delete-ref <name>\n");
+        printf("\tmyGit add <elem> [<elem2> <elem3> ...]\n");
+        printf("\tmyGit list-add\n");
+        printf("\tmyGit clear-add\n");
+        printf("\tmyGit commit <branch name> [-m <message>]\n");
+
+
+
         return -1;
     }else{
         if(strcmp(argv[1],"init") == 0){
@@ -32,11 +42,11 @@ int main(int argc, char** argv){
             return 1;
         }
         if((strcmp(argv[1],"create-ref") == 0) && (argc >=4)){
-            createUpdateRef(argv[3], argv[4]);
+            createUpdateRef(argv[2], argv[3]);
             return 1;
         }
         if(strcmp(argv[1],"delete-ref") == 0){
-            deleteRef(argv[1]);
+            deleteRef(argv[2]);
             return 1;
         }
         if(strcmp(argv[1],"add") == 0){
@@ -54,6 +64,10 @@ int main(int argc, char** argv){
         if(strcmp(argv[1],"clear-add") == 0){
             FILE* f = fopen(".add","w");
             fclose(f);
+            return 1;
+        }       
+        if((strcmp(argv[1],"commit") == 0) && (argc >=3)){
+            myGitCommit(argv[2],argv[3]);
             return 1;
         }        
         printf("NON OK");

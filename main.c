@@ -421,7 +421,7 @@ int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode){
 	wt->tab[wt->n] = *createWorkFile(name);
 	wt->tab[wt->n].hash = strdup(hash);/* Gérez si on entre un hash null ?? */
 	wt->tab[wt->n].mode = mode;
-	printf("Ajout dans le wt =%s %s %d\n",wt->tab[wt->n].name,wt->tab[wt->n].hash,wt->tab[wt->n].mode);
+	//printf("Ajout dans le wt =%s %s %d\n",wt->tab[wt->n].name,wt->tab[wt->n].hash,wt->tab[wt->n].mode);
 
 
 	wt->n = wt->n+1;
@@ -1086,11 +1086,11 @@ void myGitAdd(char* file_or_folder){
 	FILE* f = fopen(".add","r");
 	WorkTree* wt;
 	if (f == NULL) {
-		printf(".add existe pas, donc on va le créer\n");
+		//printf(".add existe pas, donc on va le créer\n");
         if(errno == ENOENT){// Si Le fichier n'existe pas
 			f = fopen(".add","w"); // On le créer
 			if(f != NULL){
-				printf(".add a été créer\n");
+				//printf(".add a été créer\n");
 				wt = initWorkTree();
 				appendWorkTree(wt,file_or_folder,"hash_test",0);
 				fclose(f);
@@ -1103,7 +1103,6 @@ void myGitAdd(char* file_or_folder){
     }else{
 		wt = ftwt(".add");
 		appendWorkTree(wt,file_or_folder,"hash_test",0);
-		printf("ici\n");
         fclose(f);
 		wttf(wt, ".add");
     }
