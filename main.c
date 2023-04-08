@@ -991,3 +991,79 @@ char* blobCommit(Commit* c){
 	return hash_return;
 
 }
+
+/* Exercice 7 – Gestion temporelle des commits de manière linéaire */
+/*MANIPULATION DES REEFERENCES*/
+
+void initRefs(){
+/*cree le repertoire cache .refs (s’il n’existe pas
+deja), puis cree les fichiers master et HEAD (vides)*/
+	DIR * dir = opendir(".refs");
+	if(dir == NULL){
+		system("mkdir .refs");
+		system("touch .refs/master");
+		system("touch .refs/HEAD");
+		return;
+	}
+	system("touch .refs/master");
+	system("touch .refs/HEAD");
+	closedir(dir);
+}
+
+void createUpdateRef(char* ref_name, char* hash){
+	
+	initRefs();
+	// Permet de rentrer dans le repertoire .refs
+	char buff_path_to_ref[255];
+	sprintf(buff_path_to_ref,".refs/%s",ref_name);
+	FILE* f = fopen(buff_path_to_ref,"w");
+	if(f == NULL){
+		return;
+	}
+	fprintf(f, "%s\n", hash);
+	fclose(f);
+}
+
+void deleteRef(char* ref_name){
+
+	// Permet de rentrer dans le repertoire .refs
+	char buff_path_to_ref[255];
+	sprintf(buff_path_to_ref,".refs/%s",ref_name);
+	FILE* f = fopen(buff_path_to_ref,"r");
+
+	// Si le file n'existe pas 
+	if (f == NULL){
+		return ;
+	}
+	if(remove(buff_path_to_ref) == 0){
+		//printf("%s a ete supp !!! \n",ref_name);
+	}else{
+		//printf("%s n'a pas ete supp !!! \n",ref_name);
+		fclose(f);
+	}
+	return;
+}
+
+char* getRef(char* ref_name){
+	
+	// Permet de rentrer dans le repertoire .refs
+	char buff_path_to_ref[255];
+	sprintf(buff_path_to_ref,".refs/%s",ref_name);
+	FILE* f = fopen(buff_path_to_ref,"r");
+	//printf("PATH =%s\n",buff_path_to_ref);
+	if(f == NULL){
+		return NULL;
+	}
+	char *buff_hash = (char*)malloc(sizeof(char)*255);
+	if(fgets(buff_hash,200,f) == NULL){
+		char* buff_vide = malloc(sizeof(char)*2);
+		sprintf(buff_vide," ");
+		fclose(f);
+		return buff_vide;
+	}
+	printf("%s",buff_hash);
+	fclose(f);
+	return buff_hash;
+}
+
+/* SIMULATION DE LA COMMANDE GIT ADD */

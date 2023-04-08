@@ -233,7 +233,18 @@ int main(int argc, char** argv){
 
 	Commit* commit_f = ftc("test_vers_file.txt");
 	printf("\n\n%s\n",cts(commit_f));
-	blobCommit(commit);
+	printf("\n%s\n",blobCommit(commit));
+	
+	/* Exercice 7 – Gestion temporelle des commits de manière linéire */
+	createUpdateRef("HEAD", "hash_suivie_par_HEAD");
+	//createUpdateRef("master", "hash_suivie_par_master");
+	createUpdateRef("develop", "hash_suivie_par_develop");
+	deleteRef("develop");
+	printf("DEBUT:%s:FIN\n",getRef("HEAD"));
+	printf("DEBUT:%s:FIN\n",getRef("master"));
+	printf("DEBUT:%s:FIN\n",getRef("develop"));
+
+
 
 	return 0;
 }
