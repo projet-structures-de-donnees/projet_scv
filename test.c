@@ -237,14 +237,15 @@ int main(int argc, char** argv){
 	
 	/* Exercice 7 – Gestion temporelle des commits de manière linéire */
 	createUpdateRef("HEAD", "hash_suivie_par_HEAD");
-	//createUpdateRef("master", "hash_suivie_par_master");
+	createUpdateRef("master", "hash_suivie_par_master");
 	createUpdateRef("develop", "hash_suivie_par_develop");
-	deleteRef("develop");
+	//deleteRef("develop");
 	printf("DEBUT:%s:FIN\n",getRef("HEAD"));
 	printf("DEBUT:%s:FIN\n",getRef("master"));
 	printf("DEBUT:%s:FIN\n",getRef("develop"));
 
-
+	myGitAdd("file.txt");
+	myGitAdd("Makefile");
 
 	return 0;
 }

@@ -419,12 +419,14 @@ int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode){
 	if((wt == NULL) || (inWorkTree(wt,name) != -1)) return -1;
 	if(wt->n >= wt->size) return -1;
 	wt->tab[wt->n] = *createWorkFile(name);
-	wt->tab[wt->n].hash = strdup(hash);
+	wt->tab[wt->n].hash = strdup(hash);/* Gérez si on entre un hash null ?? */
 	wt->tab[wt->n].mode = mode;
+	printf("Ajout dans le wt =%s %s %d\n",wt->tab[wt->n].name,wt->tab[wt->n].hash,wt->tab[wt->n].mode);
+
 
 	wt->n = wt->n+1;
 
-	return 0;
+	return 1;
 }
 
 char* wtts(WorkTree* wt){
@@ -1067,3 +1069,37 @@ char* getRef(char* ref_name){
 }
 
 /* SIMULATION DE LA COMMANDE GIT ADD */
+void myGitAdd(char* file_or_folder){
+	printf("RENTRER\n");
+	if(file_or_folder == NULL){
+		return;
+	}
+	FILE* f = fopen(".add","r");
+	WorkTree* wt;
+	if (f == NULL) {
+		printf(".add existe pas, donc on va le créer\n");
+        if(errno == ENOENT){// Si Le fichier n'existe pas
+			f = fopen(".add","w"); // On le créer
+			if(f != NULL){
+				printf(".add a été créer\n");
+				wt = initWorkTree();
+				printf("LA\n");
+				appendWorkTree(wt,file_or_folder,"hash_test",0);
+				printf("PAS\n");
+				fclose(f);
+				printf("POO\n");
+				wttf(wt, ".add");
+				printf("APA\n");
+			}
+			return;
+		}else{ //Erreur fopen
+			return;
+        }
+    }else{
+		wt = ftwt(".add");
+		appendWorkTree(wt,file_or_folder,"hash_test",0);
+		printf("ici\n");
+        fclose(f);
+		wttf(wt, ".add");
+    }
+}

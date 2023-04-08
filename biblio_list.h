@@ -117,7 +117,7 @@ void deleteRef(char* ref_name);
 char* getRef(char* ref_name);
 
 /* SIMULATION DE LA COMMANDE GIT ADD */
-
+void myGitAdd(char* file_or_folder);
 
 
 
