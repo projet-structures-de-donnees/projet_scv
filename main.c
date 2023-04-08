@@ -528,7 +528,7 @@ int wttf(WorkTree* wt, char* file){
 WorkTree* ftwt(char* file){
 	FILE* f = fopen(file,"r");
 	if (f == NULL){
-		return ;
+		return NULL;
 	}
 	char content_buff[255];
 	char name[255];
@@ -681,7 +681,6 @@ char* saveWorkTree(WorkTree* wt, char* path){
 			WorkTree* newWT=initWorkTree();
 			List *L=listdir(conc(path,wt->tab[i].name));
 			Cell *ptr = *L;
-			int k = 0;
 			while(ptr!= NULL){
 				if(strncmp(ptr->data,".",1) != 0){
 					printf("%s\n",ptr->data);
@@ -840,7 +839,7 @@ void commitSet(Commit* c, char* key, char* value){
 Commit *createCommit(char* hash){
 	Commit *c = initCommit();
 	if(c == NULL){
-		return;
+		return NULL;
 	}
 	commitSet(c, "tree",hash);
 	return c;
