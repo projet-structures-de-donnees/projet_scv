@@ -233,6 +233,7 @@ int main(int argc, char** argv){
 
 	Commit* commit_f = ftc("test_vers_file.txt");
 	printf("\n\n%s\n",cts(commit_f));
+	blobCommit(commit);
 
 	return 0;
 }

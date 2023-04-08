@@ -335,6 +335,7 @@ void blobFile(char* file){
 	
 	
 	char buff[255];
+	// Sinon on ne pourra pas utiliser touch 
 	if(!file_exists(repertoire)){
 		sprintf(buff,"mkdir %s",repertoire);
 		system(buff);
@@ -944,4 +945,49 @@ Commit* ftc(char* file){
 	}
 	return c;
 	fclose(f);
+}
+
+char* blobCommit(Commit* c){
+	//reprise du code de blobWorktree, façon Commit
+	if(c == NULL){
+		return NULL;
+	}
+
+	static char template[] = "myfileXXXXXX";
+	char fname[1000];
+	strcpy(fname,template);
+	mkstemp(fname);
+
+	ctf(c,fname);
+	char* hash = sha256file(fname);
+	char* hashPath = hashToPath(hash);
+	char* hash_return = malloc(sizeof(char)*255);
+	sprintf(hash_return,"%s.c",hash);
+
+
+	char repertoire[3];
+	repertoire[0]=hashPath[0];
+	repertoire[1]=hashPath[1];
+	repertoire[2]='\0';
+
+	char buff_mkdir[255];
+	if(!file_exists(repertoire)){
+		sprintf(buff_mkdir,"mkdir %s",repertoire);
+		system(buff_mkdir);
+	}
+	char chemin[255];
+	sprintf(chemin,"%s.c",hashPath);
+	
+	char buff_touch[1500];
+	sprintf(buff_touch,"touch %s",chemin);
+	system(buff_touch);
+	
+	cp(chemin,fname);
+
+	char buffSup[1500];
+	sprintf(buffSup,"rm %s",fname);
+	system(buffSup);
+
+	return hash_return;
+
 }
