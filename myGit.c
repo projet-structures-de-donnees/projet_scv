@@ -70,7 +70,7 @@ int main(int argc, char** argv){
             myGitCommit(argv[2],argv[3]);
             return 1;
         }        
-        printf("NON OK");
+        printf("%s %s : NOT found\n",argv[0],argv[1]);
     }
     return 0;
 }

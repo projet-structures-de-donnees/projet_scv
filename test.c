@@ -246,6 +246,7 @@ int main(int argc, char** argv){
 
 	//myGitAdd("file.txt");
 	//myGitAdd("Makefile");
+	/*
 	printf("*¨$`ù^$`ù^$`ù^----------ù^$``^$`$`^$^$-------\n");
 	char* t = "HALLOWEEN";
 
@@ -253,8 +254,16 @@ int main(int argc, char** argv){
 	initRefs();
 	myGitAdd("Makefile");
 	myGitCommit("master", "début C'est un test de message de commit pour faire des test skiuuuuu");
+	*/
 
-
-
+/* --------------------- PARTIE 4 --------------------- */
+/* Gestion d’une timeline arborescente */
+printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une timeline arborescente \n\n");
+	//initBranch();
+	//initRefs();
+	printf("br_ex =%d\n",branchExists("HEAD"));
+	//createBranch("feature1");
+	printf("getCurBra =%s\n",getCurrentBranch());
+	printBranch("master");
 	return 0;
 }

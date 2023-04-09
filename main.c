@@ -39,6 +39,7 @@ char * sha256file(char* file){
 	// Ne pas oublier de free buff
 	buff = (char*)malloc(sizeof(char)*255);
 	fgets(buff,255,f);
+	fclose(f);
 	
 	char buffSup[1500];
 	sprintf(buffSup,"rm %s",fname);
@@ -726,8 +727,7 @@ kvp* createKeyVal(char* key, char* val){
 	//printf("%s -- %s\n",key,val);
 	keyVal->key=strdup(key);
 	keyVal->value=strdup(val);
-	//printf("BONJOUR\n");
-	printf("%s\n",kvts(keyVal));
+	//printf("%s\n",kvts(keyVal));
 	return keyVal;
 }
 
@@ -807,13 +807,12 @@ void commitSet(Commit* c, char* key, char* value){
 	}
 	int nb_commit = c->n;
 	kvp* k = createKeyVal(key, value);
-	printf("LA\n");
 	unsigned long hash = sdbm(key);
 	unsigned long probing_line;
 	int i = 0;
 	while(nb_commit == c->n){
 		probing_line = (hash + i)%c->size ;
-		printf("i =%d\n",i);
+		//printf("i =%d\n",i);
 		//printf("hash + %lu modulo %d=%lu\n",i,c->size,(hash + i)%c->size);
 		// Si la case et vide -> on insert
 		if(c->T[probing_line] == NULL ){
@@ -831,9 +830,9 @@ void commitSet(Commit* c, char* key, char* value){
 		i++;
 	}
 
-	for (int i = 0; i<c->size; i++){
+	/*for (int i = 0; i<c->size; i++){
 		printf("%s\n",kvts(c->T[i]));
-	}
+	}*/
 
 }
 Commit *createCommit(char* hash){
@@ -845,18 +844,19 @@ Commit *createCommit(char* hash){
 	return c;
 }
 char* commitGet(Commit* c, char* key){
-	if(c == NULL){
+	if(c == NULL || key == NULL){
 		return NULL;
 	}
 	unsigned long hash = sdbm(key);
 	unsigned long probing_line;
 	int i = 0;
 	while (i < c->size){
-		printf("%lu\n", probing_line);
 		probing_line = (hash + i)%c->size ;
-		if(strcmp(c->T[probing_line]->key, key) == 0){
-			printf("fun =%s\n",c->T[probing_line]->key);
-			return c->T[probing_line]->value;
+		//printf("pbl =%lu\n", probing_line);
+		if(c->T[probing_line] != NULL){ //Si c'est NULL (DESSUS PENDANT 30min depuis fct printBranch)
+			if(strcmp(c->T[probing_line]->key, key) == 0){
+				return c->T[probing_line]->value;
+			}
 		}
 		if (c->T[probing_line] == NULL){
 			return NULL;
@@ -937,15 +937,21 @@ void ctf(Commit* c, char* file){
 	fclose(f);
 }
 
+
 Commit* ftc(char* file){
 	if(file == NULL){
 		return NULL;
 	}
 	FILE* f = fopen(file,"r");
 	if(f == NULL){
-		return NULL;
+		if(errno == ENOENT){
+			printf("ftc: Le fichier %s n'existe pas !! \n",file);
+			return NULL;
+		}else{
+			printf("ftc: autre erreur fopen\n");
+			return NULL;
+		}
 	}
-	
 	Commit *c = initCommit();
 	char key[255];
 	char value[255];
@@ -955,8 +961,8 @@ Commit* ftc(char* file){
 		commitSet(c,key,value);
 		}
 	}
-	return c;
 	fclose(f);
+	return c;
 }
 
 char* blobCommit(Commit* c){
@@ -1032,7 +1038,8 @@ void createUpdateRef(char* ref_name, char* hash){
 	if(f == NULL){
 		return;
 	}
-	fprintf(f, "%s\n", hash);
+	//Ne pas mettre de saut de ligne sinon, probleme pour ouvrir le fichier dans les fonction d'apres(ex : printBranch)
+	fprintf(f, "%s", hash);
 	fclose(f);
 }
 
@@ -1073,7 +1080,7 @@ char* getRef(char* ref_name){
 		fclose(f);
 		return buff_vide;
 	}
-	printf("%s",buff_hash);
+	//printf("%s",buff_hash);
 	fclose(f);
 	return buff_hash;
 }
@@ -1151,4 +1158,80 @@ void myGitCommit(char* branch_name, char* message){
 	char *hash_commit = blobCommit(c);
 	createUpdateRef(branch_name, hash_commit);
 	createUpdateRef("HEAD", hash_commit);
+}
+
+/* --------------------- PARTIE 4 --------------------- */
+/* Gestion d’une timeline arborescente */
+
+/* Exercice 8 – Fonctions de base de manipulation des branches */
+
+void initBranch(){
+/*cree le fichier cache .current_branch contenant
+la chaine de caracteres master*/
+	FILE* f = fopen(".current_branch","w");
+	if(f == NULL){
+		return;
+	}
+	fprintf(f,"master");
+	fclose(f);
+}
+
+int branchExists(char* branch){
+/*verifie l’existence d’une branche*/
+	char path_branch[255];
+	sprintf(path_branch,".refs/%s",branch);
+	return file_exists2(path_branch);
+}
+
+void createBranch(char* branch){
+/*cree une reference qui pointe vers le meme commit que la reference HEAD*/
+	createUpdateRef(branch, getRef("HEAD"));
+}
+
+char* getCurrentBranch(){
+/*lit le fichier cache .current_branch pour retourner le nom de la branche courante*/
+	FILE* f = fopen(".current_branch","r");
+	if(f == NULL){
+		return NULL;
+	}
+	char *name_curr_branch = malloc(sizeof(char)*255); 
+	if(fgets(name_curr_branch,255,f) == NULL){
+		return NULL;
+	}
+	fclose(f);
+	return name_curr_branch;
+}
+//predecessor
+void printBranch(char* branch){
+/*parcourt la branche appelee branch, et pour chacun de ses commits,
+ affiche son hash et son message descriptif (s’il en existe un).*/
+	if(branch == NULL || !branchExists(branch)){
+		return ;
+	}
+	printf("\n");
+	char* hash_commit = getRef(branch);
+	Commit *c = NULL;
+	char* message_c;
+	char* predecessor_c;
+	do{
+		c = ftc(hashToPath(hash_commit));
+		if(c == NULL){
+			return;
+		}
+		message_c = commitGet(c, "message");
+		if(message_c != NULL){
+			printf("commit %s\nmessage\t%s\n\n",hash_commit,message_c);
+		}else{
+			printf("commit %s\n\n",hash_commit);
+		}
+		predecessor_c = commitGet(c, "predecessor");
+
+		/*if(predecessor_c == NULL){
+			printf("PAS DE PREDECESSOR\n");
+		}else{
+			printf("predecessor =%s\n",predecessor_c);
+		}*/
+
+		hash_commit = predecessor_c; 
+	}while(predecessor_c != NULL);
 }

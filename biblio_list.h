@@ -1,6 +1,6 @@
 #ifndef __BIBLIO_LIST_H__
 #define __BIBLIO_LIST_H__
-
+/*MODIF --- TEEEESTTTTT*/
 
 /* --------------------- PARTIE 1 --------------------- */
 typedef struct cell { 
@@ -37,7 +37,6 @@ char* hashToPath(char* hash);
 void blobFile(char* file);
 
 /* --------------------- PARTIE 2 --------------------- */
-
 
 typedef struct { 
 	char* name;
@@ -78,6 +77,7 @@ char* saveWorkTree(WorkTree* wt, char* path);
 void restoreWorkTree(WorkTree* wt, char* path);
 
 /* --------------------- PARTIE 3 --------------------- */
+/* Gestion des commits */
 
 
 typedef struct key_value_pair{ 
@@ -121,5 +121,19 @@ void myGitAdd(char* file_or_folder);
 
 /* SIMULATION DE LA COMMANDE GIT COMMIT */
 void myGitCommit(char* branch_name, char* message);
+
+/* --------------------- PARTIE 4 --------------------- */
+/* Gestion d’une timeline arborescente */
+/* Exercice 8 – Fonctions de base de manipulation des branches */
+
+void initBranch();
+int branchExists(char* branch);
+void createBranch(char* branch);
+char* getCurrentBranch();
+void printBranch(char* branch);
+List* branchList(char* branch);
+List* getAllCommits();
+
+/* Exercice 9 – Simulation de la commande git checkout */
 
 #endif
