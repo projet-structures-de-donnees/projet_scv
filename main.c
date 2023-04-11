@@ -140,6 +140,7 @@ Cell* searchList(List* L, char* str){
 	if (*L == NULL || str == NULL){
 		return NULL;
 	}
+
 	Cell *ptr = *L;
 	while(ptr){
 		if (strcmp(str,ptr->data)==0){
@@ -147,7 +148,7 @@ Cell* searchList(List* L, char* str){
 		}
 		ptr = ptr->next;
 	}
-	//printf("contenue non existant\n");
+	printf("contenue non existant\n");
 	return NULL;
 } 
 
@@ -286,7 +287,7 @@ une lecture ligne par ligne du fichier source*/
 	}
 	char buff_print[255];
 	sprintf(buff_print,"cat %s",from);
-	printf("%s\n",buff_print);
+	//printf("%s\n",buff_print);
 	system(buff_print);
 
 	if(! file_exists2(from)){
@@ -1023,6 +1024,8 @@ char* blobCommit(Commit* c){
 /*MANIPULATION DES REEFERENCES*/
 
 void initRefs(){
+	//printf("ENTER initRefs\n");
+
 /*cree le repertoire cache .refs (s’il n’existe pas
 deja), puis cree les fichiers master et HEAD (vides)*/
 	DIR * dir = opendir(".refs");
@@ -1038,7 +1041,10 @@ deja), puis cree les fichiers master et HEAD (vides)*/
 }
 
 void createUpdateRef(char* ref_name, char* hash){
-	
+	if((ref_name == NULL) || (hash == NULL)){
+		return;
+	}
+	//printf("ENTER createUpdateRef\n");
 	initRefs();
 	// Permet de rentrer dans le repertoire .refs
 	char buff_path_to_ref[255];
@@ -1073,7 +1079,8 @@ void deleteRef(char* ref_name){
 }
 
 char* getRef(char* ref_name){
-	
+	//printf("ENTER getRef\n");
+
 	// Permet de rentrer dans le repertoire .refs
 	char buff_path_to_ref[255];
 	sprintf(buff_path_to_ref,".refs/%s",ref_name);
@@ -1198,6 +1205,8 @@ void createBranch(char* branch){
 }
 
 char* getCurrentBranch(){
+	//printf("ENTER getCurrentBranch\n");
+
 /*lit le fichier cache .current_branch pour retourner le nom de la branche courante*/
 	FILE* f = fopen(".current_branch","r");
 	if(f == NULL){
@@ -1249,7 +1258,15 @@ List* branchList(char* branch){
 	if(branch == NULL){
 		return NULL;
 	}
+
 	char* hash_commit = getRef(branch);
+
+	if((hash_commit == NULL) || (strcmp(hash_commit," ") == 0)){ //file non existant ou pas de commit sur la branch
+		printf("NULL\n");
+		return NULL;
+	}
+
+
 	Commit *c = NULL;
 	char* predecessor_c;
 	List *list_hash = initList();
@@ -1312,16 +1329,17 @@ List* getAllCommits(){
 /* Exercice 9 – Simulation de la commande git checkout */
 
 void restoreCommit(char*hash_commit){
-
-	if(hash_commit == NULL){
+	//2eme partie du ou debug de 1h
+	if((hash_commit == NULL) || strcmp(hash_commit," ") == 0){//Si NULL ou si pas de commit
 		return ;
 	}
-	printf("LA-1\n");
 
 	char* cur_branch = getCurrentBranch();
+
 	List* list_commit = branchList(cur_branch);
+
 	Cell* commit = searchList(list_commit,hash_commit);
-	printf("LA-2\n");
+	printf("%s\n",commit->data);
 	if(commit == NULL){
 		return;
 	}
@@ -1344,12 +1362,12 @@ void myGitCheckoutBranch(char* branch){
 	fclose(f);
 
 	createUpdateRef("HEAD",getRef(branch));
-	restoreCommit(getRef("HEAD"));
+	char* ref = getRef("HEAD");
+	restoreCommit(ref);
 
 }
 
 List* filterList(List* L,char* pattern){
-
 	if((pattern==NULL) || (L==NULL)){
 		return NULL;
 	}
@@ -1371,18 +1389,18 @@ void myGitCheckoutCommit(char* pattern){
 	if(pattern == NULL){
 		return ;
 	}
+
 	List* list_commit=filterList(branchList(getCurrentBranch()),pattern);
-	
-	if(list_commit == NULL){
+	if(*list_commit == NULL){
 		printf("Commit non existant\n");
 		return;
 	}
 	if(listGet(list_commit, 1) != NULL){
 		printf("Précisez la requête du hash\n");
-		printf("%s\n",ltos(list_commit));
 		return;
 	}
 
 	createUpdateRef("HEAD",(*list_commit)->data);
-	restoreCommit(getRef("HEAD"));
+	char* ref = getRef("HEAD");
+	restoreCommit(ref);
 }
