@@ -136,4 +136,8 @@ List* getAllCommits();
 
 /* Exercice 9 – Simulation de la commande git checkout */
 
+void restoreCommit(char* hash_commit);
+void myGitCheckoutBanch(char* branch);
+List* filterList(List* L,char* pattern);
+ 
 #endif

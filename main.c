@@ -57,7 +57,6 @@ char * sha256file(char* file){
 List* initList(){
 	List* l = malloc(sizeof(List));
 	*l = NULL;
-	
 	return l;
 }
 
@@ -66,6 +65,9 @@ Cell* buildCell(char* ch){
 		return NULL;
 	}
 	Cell* cellule = (Cell*)malloc(sizeof(Cell));
+	if(cellule == NULL){
+		return NULL;
+	}
 	cellule->data=strdup(ch); 
 	cellule->next = NULL;
 	return cellule;
@@ -85,6 +87,9 @@ void insertFirst(List *L, Cell* C){
 //Q : 2.4
 char* ctos(Cell* c){
 /* c ne doit pas etre null  */
+	if(c == NULL){
+		return NULL;
+	}
 	return c->data;
 }
 
@@ -113,9 +118,13 @@ char* ltos(List* l){
 
 //Q : 2.5
 Cell* listGet(List* L, int i){
+	if(*L == NULL){
+		return NULL;
+	}
 	int j = 0;
 	Cell *ptr = *L;
 	while(ptr){
+		printf("lisGet j =%d\n",j);
 		if(i == j){
 			return ptr;   
 		}
@@ -128,8 +137,7 @@ Cell* listGet(List* L, int i){
 
 //Q : 2.6
 Cell* searchList(List* L, char* str){
-	if (*L == NULL){
-		printf("Usage searchList : la liste en paramètre est vide\n");
+	if (*L == NULL || str == NULL){
 		return NULL;
 	}
 	Cell *ptr = *L;
@@ -146,7 +154,7 @@ Cell* searchList(List* L, char* str){
 //Q : 2.7
 List* stol(char* s){
 /*Permet de transformer une chaîne de caractères repréesentant une liste en une liste chaînée.*/
-	if (strlen(s) == 0){
+	if (s == NULL){
 		printf("Usage stol : la chaine en paramètre est vide\n");	
 		return NULL;
 	}
@@ -157,6 +165,9 @@ List* stol(char* s){
 	int size_word;
 
 	char* word = (char*)malloc(sizeof(char)*TAILLE_MAX_DATA);
+	if(word == NULL){
+		return NULL;
+	}
 	while(end){
 		size_word = strlen(begin)-strlen(end); 
 		if(size_word){
@@ -188,25 +199,29 @@ List* stol(char* s){
 
 void ltof(List* L, char* path){
 /*Permet d’écrire une liste dans un fichier*/
-	if (*L == NULL){
-		printf("Usage ltof : la liste en paramètre est vide\n");
+	if (*L == NULL || path == NULL){
 		return ;
 	}
 	FILE* f = fopen(path,"w");
+	if(f == NULL){
+		return ;
+	}
 	Cell* ptr = *L;
-
 	while(ptr){
 		fprintf(f, "%s\n",ptr->data);
 		ptr = ptr->next;
 	}
-
-
 	fclose(f);
 }
 
 List* ftol(char* path){
-
+	if(path == NULL){
+		return NULL;
+	}
 	FILE* f =fopen(path,"r");
+	if(f == NULL){
+		return NULL;
+	}
 	List* l = initList();
 	Cell* cell = NULL;
 
@@ -228,6 +243,9 @@ List* listdir(char* root_dir){
 /*prend en paramètre une adresse et renvoie une liste contenant 
 le noms des fichiers et répertoires qui s’y trouvent*/
 	DIR* dp = opendir(root_dir);
+	if(dp == NULL){
+		return NULL;
+	}
 	struct dirent *ep;
 	List* l = initList();
 
@@ -240,21 +258,21 @@ le noms des fichiers et répertoires qui s’y trouvent*/
 			insertFirst(l,cell);
 		}
 	}
+	closedir(dp);
 	return l;
 }
 
 int file_exists(char *file){
 /*retourne 1 si le fichier existe dans le 
 répertoire courant et 0 sinon*/
-	List* l = listdir(".");
-	Cell* cell = searchList(l, file);
-	if(cell != NULL)return 1;
-	
+	FILE* f = fopen(file,"r");
+	if(f != NULL){
+		fclose(f);
+		return 1;
+	}
 	return 0;
-
 }
-/*La fonction file_exists ne trouve pas les fichiers qui ne sont pas dans le
-repertoire courant*/
+
 int file_exists2 (char *file) { 
 	struct stat buffer;
 	return (stat (file, &buffer) == 0);
@@ -263,26 +281,23 @@ int file_exists2 (char *file) {
 void cp(char *to, char *from){
 /*copie le contenu d’un fichier vers un autre, en faisant 
 une lecture ligne par ligne du fichier source*/	
-
+	if((to == NULL)||(from == NULL)){
+		return;
+	}
 	char buff_print[255];
 	sprintf(buff_print,"cat %s",from);
 	printf("%s\n",buff_print);
 	system(buff_print);
 
 	if(! file_exists2(from)){
-		printf("Sortie -- 1\n");
 		return;
 	}
 	FILE* f_from = fopen(from,"r");
 	FILE* f_to = fopen(to,"w");
 	if((f_from == NULL) || (f_to == NULL)){
 		//printf("Usage cp : Probleme FILE*\n");
-		printf("Sortie -- 2\n");
 		return ;
 	}
-
-
-
 	char buffer[256];
 
 	while(fgets(buffer,255,f_from)){
@@ -334,17 +349,12 @@ void blobFile(char* file){
 	repertoire[2]='\0';
 	printf("%s\n",repertoire);
 	
-	
 	char buff[255];
 	// Sinon on ne pourra pas utiliser touch 
 	if(!file_exists(repertoire)){
 		sprintf(buff,"mkdir %s",repertoire);
 		system(buff);
 	}
-
-	// Permet d'enlever les espaces et le tiret qui se trouve à la fin du buff
-	// Finalement geré dans hashToPath
-	//hash[38]='\0';
 	sprintf(buff,"touch %s/%s",repertoire,hash+3);
 	system(buff);
 	//sprintf(buff,"%s/%s",repertoire,hash+3);
@@ -492,8 +502,6 @@ WorkTree* stwt(char* ch){
 	car la boucle s'arrete à l'avant derniere
 	car pour le dernier contenue end vaut NULL*/
 
-	//size_content = end - begin;
-
 	/*begin est le dernier contenue il possède deja '\0'
 	 donc on peut ommetre la taille de begin*/
 	content = strcpy(content,begin);
@@ -505,8 +513,8 @@ WorkTree* stwt(char* ch){
 	//Si ce n'est pas le bon format
 	if(i == 3){
 		//printf("%s %s %d\n", name, hash, atoi(mode));
-		printf("content=%s\n",content);
-		printf("mode=%d\n",atoi(mode));
+		//printf("content=%s\n",content);
+		//printf("mode=%d\n",atoi(mode));
 		appendWorkTree(wt,name, hash, atoi(mode));
 
 	}
@@ -637,14 +645,12 @@ int isFile(const char* name)
 {
     DIR* directory = opendir(name);
 
-    if(directory != NULL)
-    {
+    if(directory != NULL){
      closedir(directory);
      return 0;//si c'est un directory
     }
 
-    if(errno == ENOTDIR)
-    {
+    if(errno == ENOTDIR){
      return 1;//si c'est un fichier
     }
 
@@ -653,6 +659,9 @@ int isFile(const char* name)
 
 char * conc(char* char1, char* char2){
 	char *  res = malloc(sizeof(char)*strlen(char1)+strlen(char2)+2);
+	if(res == NULL){
+		return NULL;
+	}
 	sprintf(res,"%s/%s",char1,char2);
 	return res;
 }	
@@ -1201,7 +1210,7 @@ char* getCurrentBranch(){
 	fclose(f);
 	return name_curr_branch;
 }
-//predecessor
+
 void printBranch(char* branch){
 /*parcourt la branche appelee branch, et pour chacun de ses commits,
  affiche son hash et son message descriptif (s’il en existe un).*/
@@ -1234,4 +1243,143 @@ void printBranch(char* branch){
 
 		hash_commit = predecessor_c; 
 	}while(predecessor_c != NULL);
+}
+
+List* branchList(char* branch){
+	if(branch == NULL){
+		return NULL;
+	}
+	char* hash_commit = getRef(branch);
+	Commit *c = NULL;
+	char* predecessor_c;
+	List *list_hash = initList();
+	do{
+		c = ftc(hashToPath(hash_commit));
+		if(c == NULL){
+			return NULL;
+		}
+		predecessor_c = commitGet(c, "predecessor");
+		insertFirst(list_hash, buildCell(hash_commit));
+		hash_commit = predecessor_c; 
+	}while(predecessor_c != NULL);
+	return list_hash;
+}
+
+List* getAllCommits(){
+	
+	List* list_branch = listdir(".refs");
+	List* list_tmp = initList(); //Liste commit de la branche courante
+	List* list_hash = initList(); //Liste a retournée
+	Cell* tmp = NULL;
+	int i = 0;
+	Cell* cell_branch = listGet(list_branch, 0);
+	Cell* cell_tmp = NULL;
+	while(cell_branch != NULL){// Tant qu'on a des branches
+		printf("%s\n",cell_branch->data);
+		if(cell_branch->data[0] != '.'){
+			list_tmp = branchList(cell_branch->data);// on stock les commit de la branche 
+			printf("%s\n",ltos(list_tmp));
+			int j = 0;
+			cell_tmp = listGet(list_tmp, 0);
+			printf("%s\n",ltos(list_tmp));
+			printf("%s\n",cell_tmp->data);
+			while(cell_tmp != NULL){
+				if(searchList(list_hash,cell_tmp->data) == NULL){
+					printf("%s\n",ltos(list_tmp));
+					printf("INSERTION DE =%s\n",cell_tmp->data);
+					insertFirst(list_hash,buildCell(cell_tmp->data));// On duplique la cellule dans la liste final
+					printf("\n\nRESULTAT FINAL  =%s\n\n",ltos(list_hash));
+					printf("%s\n",ltos(list_tmp));
+
+				}
+				j++;
+				printf("%d\n",j);
+				printf("%s\n",ltos(list_tmp));
+				cell_tmp = listGet(list_tmp,j);
+				if(cell_tmp != NULL){
+					printf("%s\n",cell_tmp->data);
+				}
+				
+			}
+		}
+		i++;
+		cell_branch = listGet(list_branch, i);
+	}
+	printf("\n\n\n");
+	return list_hash;
+}
+
+/* Exercice 9 – Simulation de la commande git checkout */
+
+void restoreCommit(char*hash_commit){
+
+	if(hash_commit == NULL){
+		return ;
+	}
+
+	char* cur_branch = getCurrentBranch();
+	List* list_commit = branchList(cur_branch);
+	Cell* commit = searchList(list_commit,hash_commit);
+
+	if(commit == NULL){
+		return;
+	}
+
+	char* path_commit = hashToPath(commit->data); //commit->data  avec le point c (a creer commit_to_path)
+	WorkTree* wt_commit = ftwt(hashToPath(commitGet(ftc(path_commit), "tree")));
+	restoreWorkTree(wt_commit,".");
+}
+
+void myGitCheckoutBanch(char* branch){
+	if(branch == NULL){
+		return;
+	}
+
+	FILE* f = fopen(".current_branch","w");
+	if(f == NULL){
+		return;
+	}
+	fprintf(f,branch);
+	fclose(f);
+
+	createUpdateRef("HEAD",getRef(branch));
+	restoreCommit(getRef("HEAD"));
+
+}
+
+List* filterList(List* L,char* pattern){
+
+	if((pattern==NULL) || (L==NULL)){
+		return NULL;
+	}
+	int size = strlen(pattern);
+	List* res = initList();
+	Cell * cell = &L;
+	while(cell != NULL){
+		if(strncmp(cell->data,pattern,size)==0){
+			insertFirst(res,cell);
+			
+		}
+		cell=cell->next;
+	}
+	return res;
+}
+
+void myGitCheckoutCommit(char* pattern){
+
+
+	List* list_commit=filterList(branchList(getCurrentBranch()),pattern);
+
+	if(list_commit == NULL){
+		printf("Commit non existant\n");
+		return;
+	}
+	if(listGet(list_commit, 1) != NULL){
+		printf("Précisez la requête du hash\n");
+		printf("%s\n",ltos(list_commit));
+		return;
+	}
+
+	createUpdateRef("HEAD",(*list_commit)->data);
+	restoreCommit(getRef("HEAD"));
 }

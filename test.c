@@ -142,7 +142,7 @@ int main(int argc, char** argv){
 	printf("%s\n",wtts(wt));
 
 	printf("*$*$*$*$*$*$*$*$*$\n");
-	WorkTree* wt2 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é669494949494    94\n\nkr\nlkfne");
+	WorkTree* wt2 = stwt("\nessay.c	3ade6c85c48640f486aab3c201bc18f79561297d	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é669494949494    94\n\nkr\nlkfne");
 	//WorkTree* wt2 = stwt(wtts(wt));
 	printf("*$*$*$*$*$*$*$*$*$\n");
 
@@ -171,8 +171,8 @@ int main(int argc, char** argv){
 	//WorkTree* wt3 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é669494949494.t    94\n\nkr\nlkfne");
 	//WorkTree* wt3 = ftwt("da/07cbed13a56810980f728c06425bad3caad280.t");
 
-	//saveWorkTree(wt2,".");
-	//restoreWorkTree(wt3, ".");
+	saveWorkTree(wt2,".");
+	restoreWorkTree(wt2, ".");
 
 
 
@@ -265,5 +265,18 @@ printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une 
 	//createBranch("feature1");
 	printf("getCurBra =%s\n",getCurrentBranch());
 	printBranch("master");
+
+	printf("%d\n",file_exists2("."));
+	printf("%s\n",ltos(branchList("HEAD")));
+	
+
+	printf("LALAL\n%s\n",ltos(listdir(".refs")));
+
+	printf("%s\n",ltos(getAllCommits()));
+
+	//restoreCommit("923ea61f8aed462921691812f74305a2a198d.c");
+
+	
+	
 	return 0;
 }
