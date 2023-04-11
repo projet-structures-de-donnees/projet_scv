@@ -1316,11 +1316,12 @@ void restoreCommit(char*hash_commit){
 	if(hash_commit == NULL){
 		return ;
 	}
+	printf("LA-1\n");
 
 	char* cur_branch = getCurrentBranch();
 	List* list_commit = branchList(cur_branch);
 	Cell* commit = searchList(list_commit,hash_commit);
-
+	printf("LA-2\n");
 	if(commit == NULL){
 		return;
 	}
@@ -1330,7 +1331,7 @@ void restoreCommit(char*hash_commit){
 	restoreWorkTree(wt_commit,".");
 }
 
-void myGitCheckoutBanch(char* branch){
+void myGitCheckoutBranch(char* branch){
 	if(branch == NULL){
 		return;
 	}
@@ -1339,7 +1340,7 @@ void myGitCheckoutBanch(char* branch){
 	if(f == NULL){
 		return;
 	}
-	fprintf(f,branch);
+	fprintf(f,"%s",branch);
 	fclose(f);
 
 	createUpdateRef("HEAD",getRef(branch));
@@ -1354,7 +1355,7 @@ List* filterList(List* L,char* pattern){
 	}
 	int size = strlen(pattern);
 	List* res = initList();
-	Cell * cell = &L;
+	Cell * cell = *L;
 	while(cell != NULL){
 		if(strncmp(cell->data,pattern,size)==0){
 			insertFirst(res,cell);
@@ -1367,9 +1368,11 @@ List* filterList(List* L,char* pattern){
 
 void myGitCheckoutCommit(char* pattern){
 
-
+	if(pattern == NULL){
+		return ;
+	}
 	List* list_commit=filterList(branchList(getCurrentBranch()),pattern);
-
+	
 	if(list_commit == NULL){
 		printf("Commit non existant\n");
 		return;

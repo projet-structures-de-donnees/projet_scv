@@ -35,6 +35,7 @@ int main(int argc, char** argv){
     }else{
         if(strcmp(argv[1],"init") == 0){
             initRefs();
+            initBranch();
             return 1;
         }
         if(strcmp(argv[1],"list-refs") == 0){
@@ -69,8 +70,45 @@ int main(int argc, char** argv){
         if((strcmp(argv[1],"commit") == 0) && (argc >=3)){
             myGitCommit(argv[2],argv[3]);
             return 1;
-        }        
-        printf("%s %s : NOT found\n",argv[0],argv[1]);
+        }
+        if(strcmp(argv[1],"get-current-branch") == 0){
+            printf("%s\n",getCurrentBranch());
+
+            return 1;
+        }  
+        if(strcmp(argv[1],"branch") == 0  && (argc >= 3)){
+            if(!branchExists(argv[2])){
+                 createBranch(argv[2]);
+            }else{
+                printf("Branche %s deja existante \n",argv[2]);
+            }
+            return 1;
+        }
+        if(strcmp(argv[1],"branch-print") == 0  && (argc >= 3)){
+            if(!branchExists(argv[2])){
+                printf("Branche %s non existante \n",argv[2]);
+                
+            }else{
+                printBranch(argv[2]);
+            }
+            return 1;
+        }
+        if(strcmp(argv[1],"checkout-branch") == 0  && (argc >= 3)){
+            if(!branchExists(argv[2])){
+                printf("Branche %s non existante \n",argv[2]);
+            }else{
+                myGitCheckoutBranch(argv[2]);
+             }
+        return 1;
+        }
+
+        if(strcmp(argv[1],"checkout-commit") == 0  && (argc >= 3)){
+            myGitCheckoutCommit(argv[2]);
+            return 1;
+        }
+    
+    printf("NOT FOUND\n");
+
     }
     return 0;
 }
