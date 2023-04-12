@@ -171,8 +171,8 @@ int main(int argc, char** argv){
 	//WorkTree* wt3 = stwt("\nessay.c	949494949494949494949	94\nrrt\ne\ngr\nkejn kjfej\nbiblio_list.h	929é94949494949494949	92\nMakefile	929é94949494949494949	92\nrep1	929é669494949494.t    94\n\nkr\nlkfne");
 	//WorkTree* wt3 = ftwt("da/07cbed13a56810980f728c06425bad3caad280.t");
 
-	saveWorkTree(wt2,".");
-	restoreWorkTree(wt2, ".");
+	//saveWorkTree(wt2,".");
+	//restoreWorkTree(wt2, ".");
 
 
 
@@ -231,9 +231,9 @@ int main(int argc, char** argv){
 
 	//ctf(commit,"test_vers_file.txt");
 
-	Commit* commit_f = ftc("test_vers_file.txt");
-	printf("\n\n%s\n",cts(commit_f));
-	printf("\n%s\n",blobCommit(commit));
+	//Commit* commit_f = ftc("test_vers_file.txt");
+	//printf("\n\n%s\n",cts(commit_f));
+	//printf("\n%s\n",blobCommit(commit));
 	
 	/* Exercice 7 – Gestion temporelle des commits de manière linéire */
 	//createUpdateRef("HEAD", "hash_suivie_par_HEAD");
@@ -276,7 +276,16 @@ printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une 
 
 	//restoreCommit("923ea61f8aed462921691812f74305a2a198d.c");
 
-	
-	
+	printf(" --------------------- PARTIE EXO 11 --------------------- \nGestion d’une timeline arborescente \n\n");
+
+
+	List* l = initList();
+	printf("\n\n");
+	printf("%s\n",wtts(mergeWorkTrees(ftwt("05/2cbbda0be8c7cb5d6ff21f92fc3a0322ecd990.t"),ftwt("0d/63448bbc161a964423eda1ff6159a4247040fb.t"),&l)));
+
+
+	printf("\n\n");
+	printf("%s\n",ltos(l));
+
 	return 0;
 }

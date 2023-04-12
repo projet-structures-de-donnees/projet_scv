@@ -576,9 +576,6 @@ int getChmod(const char *path){
 void setMode(int mode, char* path){
 	char buff[100];
 	sprintf(buff,"chmod %o %s", mode, path);
-	printf("AVEC D chmod %d %s", mode, path);
-	printf("AVEC O chmod %o %s", mode, path);
-
 	system(buff);
 }
 
@@ -1407,4 +1404,44 @@ void myGitCheckoutCommit(char* pattern){
 	createUpdateRef("HEAD",(*list_commit)->data);
 	char* ref = getRef("HEAD");
 	restoreCommit(ref);
+}
+
+WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts){
+
+	if(wt1==NULL || wt2==NULL || **conflicts==NULL){
+		return NULL;
+	}
+	if(wt1->n==0){
+		if (wt2->n==0){
+			return initWorkTree();
+		}
+		return stwt(wtts(wt2));// duplique wt2 et le retourne
+	}
+
+	WorkTree *wt_merge = initWorkTree();
+	WorkFile* current_wf = NULL;
+	int i;
+	int pos = 0;
+
+	for(i=0; i<=wt1->n; i++){
+		current_wf = &(wt1->tab[i]);
+		pos = inWorkTree(wt2,current_wf->name);
+		if(pos != -1){ // Si le le fichier/reperoire et dans les deux wt
+			printf("meme nom =%s\n",current_wf->name);
+			if(strcmp(current_wf->hash,wt2->tab[pos].hash) == 0){ //Si pas de conflits
+				if(appendWorkTree(wt_merge,current_wf->name,current_wf->hash,current_wf->mode) != 1){
+					printf("merge: erreur appendWt\n");
+					return NULL;
+				}else{
+
+				}
+			}else{ // Si conflit
+				insertFirst(*conflicts,buildCell(current_wf->name));
+			}
+		}else{
+			// A FINIR
+		}
+	}
+	return wt_merge;
+
 }

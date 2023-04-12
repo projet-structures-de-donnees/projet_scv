@@ -140,4 +140,8 @@ void restoreCommit(char* hash_commit);
 void myGitCheckoutBranch(char* branch);
 List* filterList(List* L,char* pattern);
 void myGitCheckoutCommit(char* pattern);
+
+
+/*Exercice10*/
+WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts);
 #endif
