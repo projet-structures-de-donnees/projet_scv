@@ -100,6 +100,7 @@ char* ltos(List* l){
 	char *dest=(char*)malloc(sizeof(char)*TAILLE_MAX_DATA*100);
 	if(dest == NULL){
 		printf("Erreur allocation\n");
+		return NULL;
 	}
 
 	Cell* ptr = *l;
@@ -124,14 +125,14 @@ Cell* listGet(List* L, int i){
 	int j = 0;
 	Cell *ptr = *L;
 	while(ptr){
-		printf("lisGet j =%d\n",j);
+		//printf("lisGet j =%d\n",j);
 		if(i == j){
 			return ptr;   
 		}
 		j++;
 		ptr = ptr->next;
 	}
-	printf("Usage listGet: Indice trop grand, dernier indice = %d.\n",j );
+	//printf("Usage listGet: Indice trop grand, dernier indice = %d.\n",j );
 	return NULL;
 }
 
@@ -148,7 +149,7 @@ Cell* searchList(List* L, char* str){
 		}
 		ptr = ptr->next;
 	}
-	printf("contenue non existant\n");
+	//printf("contenue non existant\n");
 	return NULL;
 } 
 
@@ -156,7 +157,7 @@ Cell* searchList(List* L, char* str){
 List* stol(char* s){
 /*Permet de transformer une chaîne de caractères repréesentant une liste en une liste chaînée.*/
 	if (s == NULL){
-		printf("Usage stol : la chaine en paramètre est vide\n");	
+		//printf("Usage stol : la chaine en paramètre est vide\n");	
 		return NULL;
 	}
 	List* l = initList();
@@ -348,7 +349,7 @@ void blobFile(char* file){
 	repertoire[0]=hash[0];
 	repertoire[1]=hash[1];
 	repertoire[2]='\0';
-	printf("%s\n",repertoire);
+	//printf("%s\n",repertoire);
 	
 	char buff[255];
 	// Sinon on ne pourra pas utiliser touch 
@@ -464,8 +465,8 @@ WorkTree* stwt(char* ch){
 	int i;
 	i = sscanf(begin,"%s\t%s\t%s",name, hash, mode);
 	if((end == NULL) && (i != 3)){
-		printf("%d\n",i);
-		printf("Usage stwt : contenue pas au bon format\n");
+		//printf("%d\n",i);
+		//printf("Usage stwt : contenue pas au bon format\n");
 		return NULL;	
 	} 
 
@@ -485,8 +486,8 @@ WorkTree* stwt(char* ch){
 		//Si ce n'est pas le bon format
 		if(i == 3){
 			//printf("%s %s %d\n", name, hash, atoi(mode));
-			printf("content=%s\n",content);
-			printf("mode=%d  %s  %s\n",atoi(mode),hash, name);
+			//printf("content=%s\n",content);
+			//printf("mode=%d  %s  %s\n",atoi(mode),hash, name);
 			appendWorkTree(wt,name, hash, atoi(mode));
 
 		}
@@ -675,10 +676,10 @@ char* saveWorkTree(WorkTree* wt, char* path){
 	//printf("path =%s\n",path);
 	//printf("DEBUT WT =%s\n",wtts(wt));
 	int i;
-	printf("n =%d\n",wt->n);
+	//printf("n =%d\n",wt->n);
 	for(i=0; i<wt->n; i++){
-		printf("i =%d\n",i);
-		printf("nom courant =%s\n",wt->tab[i].name );
+		//printf("i =%d\n",i);
+		//printf("nom courant =%s\n",wt->tab[i].name );
 		char* hash=malloc(sizeof(char)*255);
 		int mode;
 		if (isFile(conc(path,wt->tab[i].name))==1){
@@ -687,14 +688,14 @@ char* saveWorkTree(WorkTree* wt, char* path){
 			mode=getChmod(conc(path,wt->tab[i].name));
 			wt->tab[i].mode=mode;
 			wt->tab[i].hash=hash;
-			printf("name %s \nmode %d \n hash %s \n",wt->tab[i].name,wt->tab[i].mode,wt->tab[i].hash);
+			//printf("name %s \nmode %d \n hash %s \n",wt->tab[i].name,wt->tab[i].mode,wt->tab[i].hash);
 		}else{
 			WorkTree* newWT=initWorkTree();
 			List *L=listdir(conc(path,wt->tab[i].name));
 			Cell *ptr = *L;
 			while(ptr!= NULL){
 				if(strncmp(ptr->data,".",1) != 0){
-					printf("%s\n",ptr->data);
+					//printf("%s\n",ptr->data);
 					appendWorkTree(newWT,ptr->data,"lalal",0);
 				}
 				ptr=ptr->next;
@@ -768,12 +769,12 @@ kvp* stkv(char* str){
 	}
 	char key[255];
 	char value[255];
-	printf("stkv =%s\t",str);
+	//printf("stkv =%s\t",str);
 	if (sscanf(str,"%s :%s",key, value) != 2){
-		printf("NON VALIDE\n");
+		//printf("NON VALIDE\n");
 		return NULL;
 	}
-	printf("VALIDE\n");
+	//("VALIDE\n");
 	kvp *k = createKeyVal(key,value);
 	return k;
 }
@@ -808,11 +809,11 @@ char *str;
 }
 void commitSet(Commit* c, char* key, char* value){
 	if (c == NULL){
-		printf("parm c == NULL\n");
+		printf("commitSet :parm c == NULL\n");
 		return;
 	}
 	if(c->n == c->size){//tableau remplie
-		printf("REMPLI\n");
+		printf("commitSet :REMPLI\n");
 		return;
 	}
 	int nb_commit = c->n;
@@ -909,7 +910,7 @@ Commit* stc(char* ch){
 		size_word = strlen(begin)-strlen(end); 
 		strncpy(buff_word,begin,size_word);
 		buff_word[size_word]='\0';// Si la nouvelle chaine recupéré est plus petite que la précédente
-		printf("buff_word =%s\n",buff_word);
+		//printf("buff_word =%s\n",buff_word);
 		kv = stkv(buff_word);
 		if(kv != NULL){// Si buff_word est dans le bon format 
 			commitSet(commit,kv->key, kv->value);
@@ -939,7 +940,7 @@ void ctf(Commit* c, char* file){
 	while(i < c->size || trouve < c->n){
 		if (c->T[i] != NULL){
 			fprintf(f,"%s :%s\n",c->T[i]->key,c->T[i]->value);
-			printf("%d\n",i);
+			//printf("%d\n",i);
 			trouve ++;
 		}
 		i++;
@@ -955,10 +956,10 @@ Commit* ftc(char* file){
 	FILE* f = fopen(file,"r");
 	if(f == NULL){
 		if(errno == ENOENT){
-			printf("ftc: Le fichier %s n'existe pas !! \n",file);
+			//printf("ftc: Le fichier %s n'existe pas !! \n",file);
 			return NULL;
 		}else{
-			printf("ftc: autre erreur fopen\n");
+			//printf("ftc: autre erreur fopen\n");
 			return NULL;
 		}
 	}
@@ -1262,7 +1263,7 @@ List* branchList(char* branch){
 	char* hash_commit = getRef(branch);
 
 	if((hash_commit == NULL) || (strcmp(hash_commit," ") == 0)){ //file non existant ou pas de commit sur la branch
-		printf("NULL\n");
+		//printf("NULL\n");
 		return NULL;
 	}
 
@@ -1292,29 +1293,29 @@ List* getAllCommits(){
 	Cell* cell_branch = listGet(list_branch, 0);
 	Cell* cell_tmp = NULL;
 	while(cell_branch != NULL){// Tant qu'on a des branches
-		printf("%s\n",cell_branch->data);
+		//printf("%s\n",cell_branch->data);
 		if(cell_branch->data[0] != '.'){
 			list_tmp = branchList(cell_branch->data);// on stock les commit de la branche 
-			printf("%s\n",ltos(list_tmp));
+			//printf("%s\n",ltos(list_tmp));
 			int j = 0;
 			cell_tmp = listGet(list_tmp, 0);
-			printf("%s\n",ltos(list_tmp));
-			printf("%s\n",cell_tmp->data);
+			//printf("%s\n",ltos(list_tmp));
+			//printf("%s\n",cell_tmp->data);
 			while(cell_tmp != NULL){
 				if(searchList(list_hash,cell_tmp->data) == NULL){
-					printf("%s\n",ltos(list_tmp));
-					printf("INSERTION DE =%s\n",cell_tmp->data);
+					//printf("%s\n",ltos(list_tmp));
+					//printf("INSERTION DE =%s\n",cell_tmp->data);
 					insertFirst(list_hash,buildCell(cell_tmp->data));// On duplique la cellule dans la liste final
-					printf("\n\nRESULTAT FINAL  =%s\n\n",ltos(list_hash));
-					printf("%s\n",ltos(list_tmp));
+					//printf("\n\nRESULTAT FINAL  =%s\n\n",ltos(list_hash));
+					//printf("%s\n",ltos(list_tmp));
 
 				}
 				j++;
-				printf("%d\n",j);
-				printf("%s\n",ltos(list_tmp));
+				//printf("%d\n",j);
+				//printf("%s\n",ltos(list_tmp));
 				cell_tmp = listGet(list_tmp,j);
 				if(cell_tmp != NULL){
-					printf("%s\n",cell_tmp->data);
+					//printf("%s\n",cell_tmp->data);
 				}
 				
 			}
@@ -1339,7 +1340,7 @@ void restoreCommit(char*hash_commit){
 	List* list_commit = branchList(cur_branch);
 
 	Cell* commit = searchList(list_commit,hash_commit);
-	printf("%s\n",commit->data);
+	//printf("%s\n",commit->data);
 	if(commit == NULL){
 		return;
 	}
