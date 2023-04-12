@@ -575,7 +575,10 @@ int getChmod(const char *path){
 
 void setMode(int mode, char* path){
 	char buff[100];
-	sprintf(buff,"chmod %d %s", mode, path);
+	sprintf(buff,"chmod %o %s", mode, path);
+	printf("AVEC D chmod %d %s", mode, path);
+	printf("AVEC O chmod %o %s", mode, path);
+
 	system(buff);
 }
 
