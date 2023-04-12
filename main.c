@@ -1408,27 +1408,34 @@ void myGitCheckoutCommit(char* pattern){
 
 WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts){
 
-	if(wt1==NULL || wt2==NULL || **conflicts==NULL){
+	if(wt1==NULL || wt2==NULL || *conflicts==NULL){
+		printf("ici - 0\n");
 		return NULL;
 	}
 	if(wt1->n==0){
+		printf("ici - 1\n");
 		if (wt2->n==0){
+			printf("ici - 2\n");
 			return initWorkTree();
 		}
+		printf("ici - 3\n");
 		return stwt(wtts(wt2));// duplique wt2 et le retourne
 	}
-
+	printf("ici - 4\n");
 	WorkTree *wt_merge = initWorkTree();
 	WorkFile* current_wf = NULL;
 	int i;
 	int pos = 0;
 
-	for(i=0; i<=wt1->n; i++){
+	printf("ici - 5\n");
+	for(i=0; i<wt1->n; i++){// on parcourt wt1
+		printf("ici - 6\n");
 		current_wf = &(wt1->tab[i]);
 		pos = inWorkTree(wt2,current_wf->name);
 		if(pos != -1){ // Si le le fichier/reperoire et dans les deux wt
 			printf("meme nom =%s\n",current_wf->name);
 			if(strcmp(current_wf->hash,wt2->tab[pos].hash) == 0){ //Si pas de conflits
+				printf("Ajout dans wt_merge\n");
 				if(appendWorkTree(wt_merge,current_wf->name,current_wf->hash,current_wf->mode) != 1){
 					printf("merge: erreur appendWt\n");
 					return NULL;
@@ -1438,9 +1445,23 @@ WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts){
 			}else{ // Si conflit
 				insertFirst(*conflicts,buildCell(current_wf->name));
 			}
-		}else{
-			// A FINIR
+		}else{// Si le wf apparait que dans un WT On ajoute
+			if(appendWorkTree(wt_merge,current_wf->name,current_wf->hash,current_wf->mode) != 1){
+					printf("merge: erreur appendWt\n");
+					return NULL;
+			}
 		}
+	}
+	// On ajoute tous les workfile du wt2 qui ne sont pas dans wt_merge
+	for(i=0; i<wt2->n; i++){
+		current_wf = &(wt2->tab[i]);
+		if((searchList(*conflicts, current_wf->name) == NULL) && (inWorkTree(wt_merge, current_wf->name) == -1)) { // si le wf n'est ni dans la liste ni dans wt_merge
+			if(appendWorkTree(wt_merge,current_wf->name,current_wf->hash,current_wf->mode) != 1){ // ajout dans le merge
+					printf("merge: erreur appendWt\n");
+					return NULL;
+			}
+		}
+
 	}
 	return wt_merge;
 

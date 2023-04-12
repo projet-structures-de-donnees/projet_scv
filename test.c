@@ -281,7 +281,7 @@ printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une 
 
 	List* l = initList();
 	printf("\n\n");
-	printf("%s\n",wtts(mergeWorkTrees(ftwt("05/2cbbda0be8c7cb5d6ff21f92fc3a0322ecd990.t"),ftwt("0d/63448bbc161a964423eda1ff6159a4247040fb.t"),&l)));
+	printf("%s\n",wtts(mergeWorkTrees(ftwt("0d/63448bbc161a964423eda1ff6159a4247040fb.t"),ftwt("05/2cbbda0be8c7cb5d6ff21f92fc3a0322ecd990.t"),&l)));
 
 
 	printf("\n\n");

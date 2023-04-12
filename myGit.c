@@ -68,7 +68,12 @@ int main(int argc, char** argv){
             return 1;
         }       
         if((strcmp(argv[1],"commit") == 0) && (argc >=3)){
-            myGitCommit(argv[2],argv[3]);
+            if(strcmp(argv[3],"-m") == 0){
+                myGitCommit(argv[2],argv[4]);
+
+            }else{
+                myGitCommit(argv[2],NULL);
+            }
             return 1;
         }
         if(strcmp(argv[1],"get-current-branch") == 0){
