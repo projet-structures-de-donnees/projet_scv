@@ -808,8 +808,8 @@ char *str;
    return hash;
 }
 void commitSet(Commit* c, char* key, char* value){
-	if (c == NULL){
-		printf("commitSet :parm c == NULL\n");
+	if ((c == NULL) || (key == NULL) || (value == NULL) ){
+		//printf("commitSet :parm c == NULL\n");
 		return;
 	}
 	if(c->n == c->size){//tableau remplie
@@ -1464,5 +1464,100 @@ WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts){
 
 	}
 	return wt_merge;
+
+}
+/* Fusionne branche courante avec branche paramètre,
+si aucun conflit n’existe et return NULL.
+Sinon retourne la liste des conflits */
+List* merge(char* remote_branch, char* message){
+	if((remote_branch == NULL) || (strcmp(remote_branch,getCurrentBranch()) == 0)){
+		return NULL;
+	}
+	if(!branchExists(remote_branch)){
+		printf("merge: branche %s non existant\n",remote_branch);
+		return NULL;
+	}
+
+	//récupération du dernier wotkTree de la branche courante
+	char* hash_last_commit_curr = getRef(getCurrentBranch());
+	Commit *ct_curr = createCommit(hash_last_commit_curr);
+	WorkTree *wt_curr = ftwt(hashToPath(commitGet(ct_curr,"tree")));
+
+	//récupération du dernier wotkTree de la branche en parametre
+	char* hash_last_commit_remote = getRef(remote_branch);
+	Commit *ct_remote = createCommit(hash_last_commit_remote);
+	WorkTree *wt_remote = ftwt(hashToPath(commitGet(ct_remote,"tree")));
+
+
+	List* l_conflicts = initList(); 
+	WorkTree *wt_fusion = mergeWorkTrees(wt_curr,wt_fusion,&l_conflicts);
+	if(wt_fusion == NULL){
+		return NULL;
+	}
+	if(*l_conflicts != NULL){// Si conflits
+		return l_conflicts;
+	}
+
+
+	char* hash_wt_fusion = saveWorkTree(wt_fusion, ".");
+	Commit *commit = createCommit(hash_wt_fusion);
+	commitSet(commit, "predecessor", hash_last_commit_curr);
+	commitSet(commit, "merged_predecessor", hash_last_commit_remote);
+	commitSet(commit, "message", message); // commitSet gere le cas ou la value est NULL
+
+	char *hash_commit = blobCommit(commit);
+	createUpdateRef(getCurrentBranch(), hash_commit); // On met a jour la ref de la branche
+	deleteRef(remote_branch);
+	restoreCommit(hash_commit);
+
+	createUpdateRef("HEAD",hash_commit);
+
+	return NULL;
+}
+
+
+void createDeletionCommit(char * branch, List* conflicts,char * message ){
+	if(branch == NULL){
+		return;
+	}
+
+	// On stock la branche de départ
+	char * current_branch=getCurrentBranch();
+
+	char * ref_current=getRef(branch);
+	Commit *ct_branch_current= createCommit(ref_current);
+	WorkTree *wt_branch_current = ftwt(hashToPath(commitGet(ct_branch_current,"tree")));
+
+	// deplacement sur la branche en param
+	myGitCheckoutBranch(branch);
+
+	char * new_curr_branch=getCurrentBranch();
+
+	//recupere le derinier hash du commit de la branch
+	char * ref=getRef(new_curr_branch);
+	if(ref == NULL){
+		printf("Pas de référence pour la branche %s\n",branch);
+		return;
+	}
+	Commit *ct_branch= createCommit(ref);
+	WorkTree *wt_branch = ftwt(hashToPath(commitGet(ct_branch,"tree")));// Récuperation du dernier Wt de branch
+
+	// Vide la zone de préparation
+	FILE *f = fopen(".add","w");
+	fclose(f);
+
+	WorkTree* wt_merge = mergeWorkTrees(wt_branch,wt_branch_current,&conflicts);
+	if(wt_merge == NULL){
+		return;
+	}
+
+	int i;
+	for (i = 0; i < wt_merge->n; i++){
+		myGitAdd(wt_merge->tab[i].name);
+	}
+	myGitCommit(new_curr_branch,message);
+
+	myGitCheckoutBranch(current_branch);
+
 
 }

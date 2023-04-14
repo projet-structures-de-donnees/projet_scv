@@ -111,6 +111,12 @@ int main(int argc, char** argv){
             myGitCheckoutCommit(argv[2]);
             return 1;
         }
+        if(strcmp(argv[1],"merge") == 0  && (argc >= 3)){
+            if(merge(argv[2],argv[3]) ){
+
+            }
+            return 1;
+        }
     
     printf("NOT FOUND\n");
 

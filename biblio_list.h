@@ -142,6 +142,11 @@ List* filterList(List* L,char* pattern);
 void myGitCheckoutCommit(char* pattern);
 
 
-/*Exercice10*/
+/*Exercice11*/
+
 WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts);
+/* Fusionne branche courante avec branche paramètre,
+si aucun conflit n’existe et return NULL. Sinon retourne la liste des conflits */
+List* merge(char* remote_branch, char* message);
+void createDeletionCommit(char * branch, List* conflicts,char * message );
 #endif
