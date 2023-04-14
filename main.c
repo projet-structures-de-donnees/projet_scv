@@ -1080,7 +1080,7 @@ void deleteRef(char* ref_name){
 }
 
 char* getRef(char* ref_name){
-	//printf("ENTER getRef\n");
+	printf("ENTER getRef\n");
 
 	// Permet de rentrer dans le repertoire .refs
 	char buff_path_to_ref[255];
@@ -1088,6 +1088,7 @@ char* getRef(char* ref_name){
 	FILE* f = fopen(buff_path_to_ref,"r");
 	//printf("PATH =%s\n",buff_path_to_ref);
 	if(f == NULL){
+		printf("PAS DE BOL\n");
 		return NULL;
 	}
 	char *buff_hash = (char*)malloc(sizeof(char)*255);
@@ -1095,10 +1096,12 @@ char* getRef(char* ref_name){
 		char* buff_vide = malloc(sizeof(char)*2);
 		sprintf(buff_vide," ");
 		fclose(f);
+		printf("àà:%s:\n",buff_vide);
 		return buff_vide;
 	}
 	//printf("%s",buff_hash);
 	fclose(f);
+	printf("àà:%s\n",buff_hash);
 	return buff_hash;
 }
 
@@ -1206,7 +1209,7 @@ void createBranch(char* branch){
 }
 
 char* getCurrentBranch(){
-	//printf("ENTER getCurrentBranch\n");
+	printf("ENTER getCurrentBranch\n");
 
 /*lit le fichier cache .current_branch pour retourner le nom de la branche courante*/
 	FILE* f = fopen(".current_branch","r");
@@ -1357,28 +1360,36 @@ void myGitCheckoutBranch(char* branch){
 		return;
 	}
 	printf("Cas -1");
-	FILE* f = fopen(".current_branch","w");
-	if(f == NULL){
-		return;
-	}
+
 	printf("Cas -2");
 	//récupération du dernier wotkTree de la branche courante (Pour detecter les supression)
 	char* hash_last_commit_curr = getRef(getCurrentBranch());
-	Commit *ct_curr = createCommit(hash_last_commit_curr);
+	if(hash_last_commit_curr != NULL){
+		printf("%s\n",hash_last_commit_curr);
+	}
+	Commit *ct_curr = ftc(hashToPath(hash_last_commit_curr));
 	WorkTree *wt_curr = ftwt(hashToPath(commitGet(ct_curr,"tree")));
 
 	printf("Cas -3");
 	//récupération du dernier wotkTree de la branche en parametre (Pour detecter les supression)
 	char* hash_last_commit_remote = getRef(branch);
-	Commit *ct_remote = createCommit(hash_last_commit_remote);
+	Commit *ct_remote = ftc(hashToPath(hash_last_commit_remote));
 	WorkTree *wt_remote = ftwt(hashToPath(commitGet(ct_remote,"tree")));
 	printf("Cas -4");
+
+	FILE* f = fopen(".current_branch","w");
+	if(f == NULL){
+		return;
+	}
+
+	List* espace_travail = listdir(".");
+
 	// Supression des fichier et repertoire qui ne font pas parties de la branch sur lql on se déplace
 	int i;
 	printf("boucle max =%d",wt_curr->n);
 	for(i=0; i<wt_curr->n; i++){
 		printf("nb =%d\n",i);
-		if(inWorkTree(wt_remote, wt_curr->tab[i].name) != -1){
+		if(inWorkTree(wt_remote, wt_curr->tab[i].name) == -1){
 			printf("A supprimer %s\n", wt_curr->tab[i].name);
 			if(isFile(wt_curr->tab[i].name) == 1){
 				remove(wt_curr->tab[i].name);
@@ -1514,12 +1525,12 @@ List* merge(char* remote_branch, char* message){
 
 	//récupération du dernier wotkTree de la branche courante
 	char* hash_last_commit_curr = getRef(getCurrentBranch());
-	Commit *ct_curr = createCommit(hash_last_commit_curr);
+	Commit *ct_curr = ftc(hashToPath(hash_last_commit_curr));
 	WorkTree *wt_curr = ftwt(hashToPath(commitGet(ct_curr,"tree")));
 
 	//récupération du dernier wotkTree de la branche en parametre
 	char* hash_last_commit_remote = getRef(remote_branch);
-	Commit *ct_remote = createCommit(hash_last_commit_remote);
+	Commit *ct_remote = ftc(hashToPath(hash_last_commit_remote));
 	WorkTree *wt_remote = ftwt(hashToPath(commitGet(ct_remote,"tree")));
 
 
@@ -1559,7 +1570,7 @@ void createDeletionCommit(char * branch, List* conflicts,char * message ){
 	char * current_branch=getCurrentBranch();
 
 	char * ref_current=getRef(branch);
-	Commit *ct_branch_current= createCommit(ref_current);
+	Commit *ct_branch_current= ftc(hashToPath(ref_current));
 	WorkTree *wt_branch_current = ftwt(hashToPath(commitGet(ct_branch_current,"tree")));
 
 	// deplacement sur la branche en param
@@ -1573,7 +1584,7 @@ void createDeletionCommit(char * branch, List* conflicts,char * message ){
 		printf("Pas de référence pour la branche %s\n",branch);
 		return;
 	}
-	Commit *ct_branch= createCommit(ref);
+	Commit *ct_branch= ftc(hashToPath(ref));
 	WorkTree *wt_branch = ftwt(hashToPath(commitGet(ct_branch,"tree")));// Récuperation du dernier Wt de branch
 
 	// Vide la zone de préparation
