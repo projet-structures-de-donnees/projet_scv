@@ -70,7 +70,7 @@ WorkTree* ftwt(char* file);
 /* Exercice 5 – Enregistrement instantané et restauration d’un WorkTree */
 
 char * conc(char* char1, char* char2);
-int isFile(const char* name);
+int isFile(const char* name);// rep->0; file->1; sinon -1
 int getChmod(const char *path);
 char* blobWorkTree(WorkTree* wt);
 char* saveWorkTree(WorkTree* wt, char* path);

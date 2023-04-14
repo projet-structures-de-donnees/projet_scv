@@ -1351,17 +1351,51 @@ void restoreCommit(char*hash_commit){
 }
 
 void myGitCheckoutBranch(char* branch){
+	printf("Cas - -1");
 	if(branch == NULL){
+		printf("Cas - 0");
 		return;
 	}
-
+	printf("Cas -1");
 	FILE* f = fopen(".current_branch","w");
 	if(f == NULL){
 		return;
 	}
+	printf("Cas -2");
+	//récupération du dernier wotkTree de la branche courante (Pour detecter les supression)
+	char* hash_last_commit_curr = getRef(getCurrentBranch());
+	Commit *ct_curr = createCommit(hash_last_commit_curr);
+	WorkTree *wt_curr = ftwt(hashToPath(commitGet(ct_curr,"tree")));
+
+	printf("Cas -3");
+	//récupération du dernier wotkTree de la branche en parametre (Pour detecter les supression)
+	char* hash_last_commit_remote = getRef(branch);
+	Commit *ct_remote = createCommit(hash_last_commit_remote);
+	WorkTree *wt_remote = ftwt(hashToPath(commitGet(ct_remote,"tree")));
+	printf("Cas -4");
+	// Supression des fichier et repertoire qui ne font pas parties de la branch sur lql on se déplace
+	int i;
+	printf("boucle max =%d",wt_curr->n);
+	for(i=0; i<wt_curr->n; i++){
+		printf("nb =%d\n",i);
+		if(inWorkTree(wt_remote, wt_curr->tab[i].name) != -1){
+			printf("A supprimer %s\n", wt_curr->tab[i].name);
+			if(isFile(wt_curr->tab[i].name) == 1){
+				remove(wt_curr->tab[i].name);
+			}else{
+				char buff_supp_rep[255];
+				sprintf(buff_supp_rep,"rm -r %s",wt_curr->tab[i].name);
+				system(buff_supp_rep);
+			}
+		}
+	}
+	printf("Cas -5");
+
+
 	fprintf(f,"%s",branch);
 	fclose(f);
 
+	printf("Cas -6");
 	createUpdateRef("HEAD",getRef(branch));
 	char* ref = getRef("HEAD");
 	restoreCommit(ref);
@@ -1553,7 +1587,9 @@ void createDeletionCommit(char * branch, List* conflicts,char * message ){
 
 	int i;
 	for (i = 0; i < wt_merge->n; i++){
-		myGitAdd(wt_merge->tab[i].name);
+		if(searchList(conflicts,wt_merge->tab[i].name) == NULL){ // Si le fichier/rep n'est pas dans la liste de conflit on l'ajoute
+			myGitAdd(wt_merge->tab[i].name);
+		}
 	}
 	myGitCommit(new_curr_branch,message);
 

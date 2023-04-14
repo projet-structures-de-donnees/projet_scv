@@ -101,8 +101,12 @@ int main(int argc, char** argv){
         if(strcmp(argv[1],"checkout-branch") == 0  && (argc >= 3)){
             if(!branchExists(argv[2])){
                 printf("Branche %s non existante \n",argv[2]);
+                printf("Cas - +++++++");
             }else{
+                printf("Cas - +++++++");
                 myGitCheckoutBranch(argv[2]);
+                printf("Cas - -------");
+
              }
         return 1;
         }
@@ -112,7 +116,37 @@ int main(int argc, char** argv){
             return 1;
         }
         if(strcmp(argv[1],"merge") == 0  && (argc >= 3)){
-            if(merge(argv[2],argv[3]) ){
+            List *l_conflicts = merge(argv[2],argv[3]);
+            if(*l_conflicts != NULL){
+                int choix ;
+                printf("Conflits:\n");
+                printf("1- Garder les fichiers de la branche courante (%s) ?\n",getCurrentBranch());
+                printf("2- Garder les fichiers de la branche %s ?\n",argv[2]);
+                printf("3- Choisir manuellement \n");
+                scanf("%d",&choix);
+                if(choix == 1){
+                    createDeletionCommit(argv[2],l_conflicts,argv[3]);
+                    if(merge(argv[2],argv[3]) == NULL){
+                        printf("Fusion réalisé\n");
+                    }
+                    return 1;
+                }
+                if(choix == 2){
+                    createDeletionCommit(getCurrentBranch(),l_conflicts,argv[3]);
+                    if(merge(getCurrentBranch(),argv[3])){
+                        printf("Fusion réalisé\n");
+                    }
+                    return 1;
+                }
+                if(choix == 3){
+                    // A continuer
+                    return 1;
+                }else{
+                    printf("choix non existant\n");
+                    
+                }
+            }else{
+                printf("Fusion réalisé \n");
 
             }
             return 1;
