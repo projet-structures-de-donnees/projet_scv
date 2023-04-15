@@ -101,12 +101,8 @@ int main(int argc, char** argv){
         if(strcmp(argv[1],"checkout-branch") == 0  && (argc >= 3)){
             if(!branchExists(argv[2])){
                 printf("Branche %s non existante \n",argv[2]);
-                printf("Cas - +++++++");
             }else{
-                printf("Cas - +++++++");
                 myGitCheckoutBranch(argv[2]);
-                printf("Cas - -------");
-
              }
         return 1;
         }
@@ -117,27 +113,47 @@ int main(int argc, char** argv){
         }
         if(strcmp(argv[1],"merge") == 0  && (argc >= 3)){
             List *l_conflicts = merge(argv[2],argv[3]);
-            if(*l_conflicts != NULL){
+            printf("POPOPO\n");
+            //printf("%p\n",l_conflicts);
+            //printf("%p\n",*l_conflicts);
+            //printf("%p\n",&l_conflicts);
+
+            if(l_conflicts != NULL){
+                printf("PAPAPAAPA\n");
                 int choix ;
                 printf("Conflits:\n");
                 printf("1- Garder les fichiers de la branche courante (%s) ?\n",getCurrentBranch());
                 printf("2- Garder les fichiers de la branche %s ?\n",argv[2]);
                 printf("3- Choisir manuellement \n");
                 scanf("%d",&choix);
+
+
+
+
                 if(choix == 1){
-                    createDeletionCommit(argv[2],l_conflicts,argv[3]);
-                    if(merge(argv[2],argv[3]) == NULL){
+                    List *l_conflicts2 = initList();
+                    createDeletionCommit(argv[2],l_conflicts2,argv[3]);
+                    l_conflicts2 = merge(argv[2],argv[3]);
+                    if(l_conflicts2 == NULL){
                         printf("Fusion réalisé\n");
+                    }else{
+                        printf("Error merge\n");
                     }
                     return 1;
                 }
+
                 if(choix == 2){
+                    List *l_conflicts2 = initList();
                     createDeletionCommit(getCurrentBranch(),l_conflicts,argv[3]);
-                    if(merge(getCurrentBranch(),argv[3])){
+                    l_conflicts2 = merge(getCurrentBranch(),argv[3]);
+                    if(l_conflicts2 == NULL){
                         printf("Fusion réalisé\n");
+                    }else{
+                        printf("Error merge\n");
                     }
                     return 1;
                 }
+
                 if(choix == 3){
                     // A continuer
                     return 1;
@@ -147,7 +163,6 @@ int main(int argc, char** argv){
                 }
             }else{
                 printf("Fusion réalisé \n");
-
             }
             return 1;
         }
