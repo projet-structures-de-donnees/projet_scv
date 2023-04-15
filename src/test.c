@@ -8,8 +8,11 @@
 #include <fcntl.h> // pour la fonction getChmod
 #include <sys/types.h> // pour la fonction getChmod
 #include <sys/stat.h> // pour la fonction getChmod
-#include "biblio_list.h"
-#include "main.c"
+#include "instantane.h"
+#include "worktree.h"
+#include "commit.h"
+#include "branch.h"
+#include "merge.h"
 
 #include <errno.h>//pour isFile
 #define TAILLE_MAX_DATA 255
@@ -114,7 +117,7 @@ int main(int argc, char** argv){
     blobFile("./Makefile");
     blobFile("./essay.c");*/
 
-    printf("FILE_EXISTS  = %d\n",file_exists2("./rep1/file1.txt"));
+    printf("FILE_EXISTS  = %d\n",file_exists("./rep1/file1.txt"));
     printf("FILE_EXISTS  = %d\n",file_exists("./rep1/file1.txt"));
 
 
@@ -183,8 +186,8 @@ int main(int argc, char** argv){
 
 	kvp* k2 = stkv("valeur2 :clénumber2");
 	printf("%s \n%s\n",k2->key,k2->value);
-	char* data = "fdfgsdhfsdfs445d4fsd7fg/*/+bfrsdgf$";
-	printf("%lu\n",sdbm(data)%255);
+	//char* data = "fdfgsdhfsdfs445d4fsd7fg/*/+bfrsdgf$";
+	//printf("%lu\n",sdbm(data)%255);
 	
 	char* data1 = ("clé1");
 	int b = (sdbm(data1)+0)%10;
@@ -266,7 +269,7 @@ printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une 
 	printf("getCurBra =%s\n",getCurrentBranch());
 	printBranch("master");
 
-	printf("%d\n",file_exists2("."));
+	printf("%d\n",file_exists("."));
 	printf("%s\n",ltos(branchList("HEAD")));
 	
 
