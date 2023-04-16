@@ -424,7 +424,7 @@ void myGitAdd(char* file_or_folder){
 				appendWorkTree(wt,file_or_folder,"hash_test",0);
 				fclose(f);
 				wttf(wt, ".add");
-				freeWorkTree(wt);
+				//freeWorkTree(wt);
 
 			}
 			return;
@@ -436,7 +436,7 @@ void myGitAdd(char* file_or_folder){
 		appendWorkTree(wt,file_or_folder,"hash_test",0);
         fclose(f);
 		wttf(wt, ".add");
-		freeWorkTree(wt);
+		//freeWorkTree(wt);
     }
 }
 /* SIMULATION DE LA COMMANDE GIT COMMIT */
@@ -469,7 +469,7 @@ void myGitCommit(char* branch_name, char* message){
 		return ;
 	}
 	char* hash_wt = saveWorkTree(wt, ".");
-	freeWorkTree(wt);
+	//freeWorkTree(wt);
 	if(hash_wt == NULL){
 		return ;
 	}
@@ -482,7 +482,7 @@ void myGitCommit(char* branch_name, char* message){
 		commitSet(c, "message", message);
 	}
 	char *hash_commit = blobCommit(c);
-	freeCommit(c);
+	//freeCommit(c);
 	createUpdateRef(branch_name, hash_commit);
 	createUpdateRef("HEAD", hash_commit);
 }

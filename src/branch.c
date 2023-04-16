@@ -176,7 +176,7 @@ void restoreCommit(char*hash_commit){
 	List* list_commit = branchList(cur_branch);
 
 	Cell* commit = searchList(list_commit,hash_commit);
-	freeList(list_commit);
+	//freeList(list_commit);
 	//printf("%s\n",commit->data);
 	if(commit == NULL){
 		return;
@@ -185,9 +185,10 @@ void restoreCommit(char*hash_commit){
 	char* path_commit = hashToPath(commit->data); //commit->data  avec le point c (a creer commit_to_path)
 	WorkTree* wt_commit = ftwt(hashToPath(commitGet(ftc(path_commit), "tree")));
 	restoreWorkTree(wt_commit,".");
-	free(path_commit);
-	freeWorkTree(wt_commit);
-	freeCommit(commit);
+	//free(path_commit);
+	//freeWorkTree(wt_commit);
+	//freeCell(commit);
+	//freeList(list_commit);
 }
 
 void myGitCheckoutBranch(char* branch){
@@ -209,7 +210,7 @@ void myGitCheckoutBranch(char* branch){
 	createUpdateRef("HEAD",getRef(branch));
 	char* ref = getRef("HEAD");
 	restoreCommit(ref);
-	free(ref);
+	//free(ref);
 
 }
 
@@ -248,8 +249,8 @@ void myGitCheckoutCommit(char* pattern){
 	}
 
 	createUpdateRef("HEAD",(*list_commit)->data);
-	freeList(list_commit);
+	//freeList(list_commit);
 	char* ref = getRef("HEAD");
 	restoreCommit(ref);
-	free(ref);
+	//free(ref);
 }

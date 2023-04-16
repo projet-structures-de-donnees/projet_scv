@@ -22,10 +22,10 @@ WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts){
 		return NULL;
 	}
 	if(wt1->n==0){
-		freeWorkTree(wt1);
+		//freeWorkTree(wt1);
 		//printf("wt1->n est a ZERO\n");
 		if (wt2->n==0){
-			freeWorkTree(wt2);
+			//freeWorkTree(wt2);
 			//printf("wt2->n est a ZERO\n");
 			return initWorkTree();
 		}
@@ -86,8 +86,8 @@ WorkTree* mergeWorkTrees(WorkTree* wt1, WorkTree* wt2 , List** conflicts){
 		}
 
 	}
-	freeWorkTree(wt1);
-	freeWorkTree(wt2);
+	//freeWorkTree(wt1);
+	//freeWorkTree(wt2);
 	return wt_merge;
 
 }
@@ -108,14 +108,14 @@ List* merge(char* remote_branch, char* message){
 	char* hash_last_commit_curr = getRef(getCurrentBranch());
 	Commit *ct_curr = ftc(hashToPath(hash_last_commit_curr));
 	WorkTree *wt_curr = ftwt(hashToPath(commitGet(ct_curr,"tree")));
-	freeCommit(ct_curr);
+	//freeCommit(ct_curr);
 	//printf("Affichage last wt_curr:(%s)\n%s\n",getCurrentBranch(),wtts(wt_curr));
 
 	//récupération du dernier wotkTree de la branche en parametre
 	char* hash_last_commit_remote = getRef(remote_branch);
 	Commit *ct_remote = ftc(hashToPath(hash_last_commit_remote));
 	WorkTree *wt_remote = ftwt(hashToPath(commitGet(ct_remote,"tree")));
-	freeCommit(ct_remote);
+	//freeCommit(ct_remote);
 	//printf("Affichage last wt_de la branch:(%s)\n%s\n",remote_branch,wtts(wt_remote));
 
 	List* l_conflicts = initList(); 
@@ -133,11 +133,11 @@ List* merge(char* remote_branch, char* message){
 
 	char* hash_wt_fusion = saveWorkTree(wt_fusion, ".");
 	Commit *commit = createCommit(hash_wt_fusion);
-	free(hash_wt_fusion);
+	//free(hash_wt_fusion);
 	commitSet(commit, "predecessor", hash_last_commit_curr);
-	free(hash_last_commit_curr);
+	//free(hash_last_commit_curr);
 	commitSet(commit, "merged_predecessor", hash_last_commit_remote);
-	free(hash_last_commit_remote);
+	//free(hash_last_commit_remote);
 	commitSet(commit, "message", message); // commitSet gere le cas ou la value est NULL
 	//printf("Affichage du commit de fusion:\n");
 	//printf("%s\n",cts(commit));
@@ -149,8 +149,8 @@ List* merge(char* remote_branch, char* message){
 	deleteRef(remote_branch);
 	restoreCommit(hash_commit);
 	createUpdateRef("HEAD",hash_commit);
-	free(hash_commit);
-	freeCommit(commit);
+	//free(hash_commit);
+	//freeCommit(commit);
 
 	return NULL;
 }

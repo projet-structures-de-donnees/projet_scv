@@ -188,7 +188,7 @@ WorkTree* stwt(char* ch){
 		appendWorkTree(wt,name, hash, atoi(mode));
 
 	}
-	free(content);
+	//free(content);
 	return wt;
 
 }

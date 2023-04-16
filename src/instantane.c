@@ -218,7 +218,7 @@ List* stol(char* s){
 		insertFirst(l, cell);
 	}
 
-	free(word);
+	//free(word);
 	return l;
 }
 
