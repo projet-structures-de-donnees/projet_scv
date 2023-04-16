@@ -74,6 +74,15 @@ Cell* buildCell(char* ch){
 	return cellule;
 }
 
+void freeCell(Cell* c){
+	if(c == NULL){
+		return ;
+	}
+	free(c->data);
+	free(c);
+}
+
+
 void insertFirst(List *L, Cell* C){
 	//printf("insertfirst L=%p\n",L);
 	//printf("insertfirst *L=%p\n",*L);
@@ -82,6 +91,19 @@ void insertFirst(List *L, Cell* C){
 	C->next = *L;
 	*L = C;	
 	//printf("insertfirst=%p\n",C->next);
+}
+
+void freeList(List *L){
+	if(*L == NULL){
+		return;
+	}
+	Cell *cell = *L;
+	while(cell != NULL){
+		*L = (*L)->next;
+		free(cell);
+		cell = *L;
+	}
+	free(L);
 }
 
 

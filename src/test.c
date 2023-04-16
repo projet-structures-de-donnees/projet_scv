@@ -27,67 +27,54 @@ int main(int argc, char** argv){
 	}else{
 		//system("ls")
 		//hashFile(argv[1], argv[2]);
-		char* resultat = sha256file(argv[1]);
-		printf("%s",resultat);
+		//char* resultat = sha256file(argv[1]);
+		//printf("%s",resultat);
 	}
 
+/* --------------------- PARTIE 1 --------------------- */
+/* Vers la création d’enregistrements instantanés */
+printf(" --------------------- PARTIE 1 --------------------- \n Vers la création d’enregistrements instantanés \n");
 
-
-	/*List* a = initList();
+	List* list1 = initList();
 	
 	Cell* c1 = buildCell("élément de c1");
 	Cell* c2 = buildCell("élément de c2");
 	Cell* c3 = buildCell("élément de c3");
-	Cell* c4 = buildCell("élément de c4");
-	Cell* c5 = buildCell("élément de c5");
 
+	insertFirst(list1,c1);
+	insertFirst(list1,c2);
+	insertFirst(list1,c3);
 
-	insertFirst(a,c1);
-	insertFirst(a,c2);
-	insertFirst(a,c3);
-	insertFirst(a,c4);
-	insertFirst(a,c5);
-
-
+	Cell* cellule1 = listGet(list1,6);
+	assert(cellule1 == NULL);
+	Cell* cellule2 = listGet(list1,2);
+	assert(cellule2 == c1);
 	
-	//Cell* cellule1 = listGet(a,6);
-	//printf("%s\n", cellule1->data);
 
 //TEST AFFICHAGE
 	
-	printf("c1= %p\n",c1);
-	printf("a= %p\n",a);
-	printf("*a= %p\n",*a);
-	printf("%s\n", (*a)->data);
+
+	Cell* cellule3 = searchList(list1, "élément de c7");
+	assert(cellule3 == NULL);
+	Cell* cellule4 = searchList(list1, "élément de c2");
+	assert(cellule4 == c2);
 
 
-	cellule1 = searchList(a, "élément de c7");
-	printf("%s\n",cellule1->data);
+	printf("ltos =%s\n",ltos(list1));
+
+	assert(list1 != NULL);
+	freeList(list1);
+	//assert(c1 == NULL);
+	//assert(*list1 == NULL);
 
 
-	printf("%s\n",ltos(a));
+	List* l2 = stol("||listofil|la|chaine1|1|2|a|b|| |c2|lc3|Chaine n4");
+	printf("ltos =%s\n",ltos(l2));
+	cellule2 = searchList(l2, "lc3");
+	//assert(strcmp(cellule2->data,"lc3")== 0);
+	freeList(l2);
 
-	char* chaine = strstr("chaine d|e caractere", "|");
-	printf("%s\n", chaine); 
-	*/
-
-	/*List* l2 = stol("||listofil|la|chaine1|1|2|a|b|| |c2|lc3|Chaine n4");
-
-	printf("%s\n",ltos(l2));
-	printf("%s\n",ltos(a));
-
-
-	//Cell* cellule2 = searchList(l2, "lc3");
-	
-	
-	//if(cellule2){
-	//	printf("%s\n",cellule2->data);	
-	//}else{
-	//	printf("cellule 2 VIDE !!\n");
-	//}
-	
 	ltof(l2,"file_from_ltof");
-
 	List* l3 = ftol("file_from_ltof");
 
 	
@@ -97,17 +84,17 @@ int main(int argc, char** argv){
 	//	ptr=ptr->next;}
 	
 
-	printf("%s\n",ltos(l3));
+	//printf("%s\n",ltos(l3));
 
 
 
-	List* l4 = listdir(".");
-	printf("%s\n",ltos(l4));
-	printf("EXIST  -> %d\n",file_exists("test"));
+	//List* l4 = listdir(".");
+	//printf("%s\n",ltos(l4));
+	//printf("EXIST  -> %d\n",file_exists("test"));
 
 	//cp("cp_function","main.c");
 
-	printf("%s\n",hashToPath(sha256file(argv[1])));*/
+	//printf("%s\n",hashToPath(sha256file(argv[1])));*/
 	
 	//cp("./test",argv[1]);
 
@@ -117,12 +104,15 @@ int main(int argc, char** argv){
     blobFile("./Makefile");
     blobFile("./essay.c");*/
 
-    printf("FILE_EXISTS  = %d\n",file_exists("./rep1/file1.txt"));
-    printf("FILE_EXISTS  = %d\n",file_exists("./rep1/file1.txt"));
+    //printf("FILE_EXISTS  = %d\n",file_exists("./rep1/file1.txt"));
+    //printf("FILE_EXISTS  = %d\n",file_exists("./rep1/file1.txt"));
+
+
+
 
 
 /* PARTIE 2 */
-	printf("\n\n *$*$*$*$*$*$*$*$* PARTIE 2 *$ *$*$*$*$*$*$*$* \n");
+	/*printf("\n\n *$*$*$*$*$*$*$*$* PARTIE 2 *$ *$*$*$*$*$*$*$* \n");
 	WorkFile* wf = createWorkFile("workfile_1");
 	printf("%s\n",wfts(wf));
 
@@ -180,20 +170,20 @@ int main(int argc, char** argv){
 
 
 /* PARTIE 3 */
-	printf("\n\n *$*$*$*$*$*$*$*$* PARTIE 3 *$ *$*$*$*$*$*$*$* \n");
+	/*printf("\n\n *$*$*$*$*$*$*$*$* PARTIE 3 *$ *$*$*$*$*$*$*$* \n");
 	kvp *k =createKeyVal("clé1","valeur1");
 	printf("%s\n", kvts(k));
 
 	kvp* k2 = stkv("valeur2 :clénumber2");
 	printf("%s \n%s\n",k2->key,k2->value);
-	//char* data = "fdfgsdhfsdfs445d4fsd7fg/*/+bfrsdgf$";
+	//char* data = "fdfgsdhfsdfs445d4fsd7fg/+bfrsdgf$";
 	//printf("%lu\n",sdbm(data)%255);
 	
 	char* data1 = ("clé1");
 	int b = (sdbm(data1)+0)%10;
-	printf("%d\n",b);
+	printf("%d\n",b);*/
 
-	Commit *commit = createCommit("hash_de_tree") ;
+	/*Commit *commit = createCommit("hash_de_tree") ;
 	commitSet(commit, "clé1", "valeur1");
 	commitSet(commit, "cle2", "valeur2");
 	commitSet(commit, "cle3", "valeur3");
@@ -264,10 +254,10 @@ int main(int argc, char** argv){
 printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une timeline arborescente \n\n");
 	//initBranch();
 	//initRefs();
-	printf("br_ex =%d\n",branchExists("HEAD"));
+	//printf("br_ex =%d\n",branchExists("HEAD"));
 	//createBranch("feature1");
-	printf("getCurBra =%s\n",getCurrentBranch());
-	printBranch("master");
+	//printf("getCurBra =%s\n",getCurrentBranch());
+	/*printBranch("master");
 
 	printf("%d\n",file_exists("."));
 	printf("%s\n",ltos(branchList("HEAD")));
@@ -275,11 +265,11 @@ printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une 
 
 	printf("LALAL\n%s\n",ltos(listdir(".refs")));
 
-	printf("%s\n",ltos(getAllCommits()));
+	printf("%s\n",ltos(getAllCommits()));*/
 
 	//restoreCommit("923ea61f8aed462921691812f74305a2a198d.c");
 
-	printf(" --------------------- PARTIE EXO 11 --------------------- \nGestion d’une timeline arborescente \n\n");
+	/*printf(" --------------------- PARTIE EXO 11 --------------------- \nGestion d’une timeline arborescente \n\n");
 
 
 	List* l = initList();
@@ -288,7 +278,7 @@ printf(" --------------------- PARTIE 4 --------------------- \nGestion d’une 
 
 
 	printf("\n\n");
-	printf("%s\n",ltos(l));
+	printf("%s\n",ltos(l));*/
 
 	return 0;
 }

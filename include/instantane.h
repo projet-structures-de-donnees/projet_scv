@@ -20,7 +20,9 @@ char * sha256file(char* file);
 /*EX 2*/
 List* initList();
 Cell* buildCell(char* ch);
+void freeCell(Cell* c);
 void insertFirst(List *L, Cell* C);
+void freeList(List *L);
 char* ctos(Cell* c);
 char* ltos(List* l);
 Cell* listGet(List* L, int i);
@@ -32,7 +34,6 @@ List* ftol(char* path);
 
 /*EX 3*/
 List* listdir(char* root_dir);
-int file_exists2 (char *file);
 int file_exists(char *file);
 void cp(char *to, char *from);
 char* hashToPath(char* hash);

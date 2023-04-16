@@ -85,6 +85,22 @@ Commit* initCommit(){
 	return commit;
 }
 
+void freeCommit(Commit* c){
+	if(c != NULL){
+		int i;
+		int cpt = 0;
+		for(i=0; i<c->size; i++){
+			if((c->T[i] != NULL) && (cpt < c->n )){
+				freeKeyVal(c->T[i]);
+				cpt ++;
+			}
+		}
+		free(c->T);
+		free(c);
+	}
+
+}
+
 unsigned long sdbm(char *str){
     unsigned long hash = 0;
     int c;
@@ -408,6 +424,8 @@ void myGitAdd(char* file_or_folder){
 				appendWorkTree(wt,file_or_folder,"hash_test",0);
 				fclose(f);
 				wttf(wt, ".add");
+				freeWorkTree(wt);
+
 			}
 			return;
 		}else{ //Erreur fopen
@@ -418,6 +436,7 @@ void myGitAdd(char* file_or_folder){
 		appendWorkTree(wt,file_or_folder,"hash_test",0);
         fclose(f);
 		wttf(wt, ".add");
+		freeWorkTree(wt);
     }
 }
 /* SIMULATION DE LA COMMANDE GIT COMMIT */
@@ -450,6 +469,7 @@ void myGitCommit(char* branch_name, char* message){
 		return ;
 	}
 	char* hash_wt = saveWorkTree(wt, ".");
+	freeWorkTree(wt);
 	if(hash_wt == NULL){
 		return ;
 	}
@@ -462,6 +482,7 @@ void myGitCommit(char* branch_name, char* message){
 		commitSet(c, "message", message);
 	}
 	char *hash_commit = blobCommit(c);
+	freeCommit(c);
 	createUpdateRef(branch_name, hash_commit);
 	createUpdateRef("HEAD", hash_commit);
 }

@@ -31,6 +31,13 @@ WorkFile* createWorkFile(char* name){
 	return wf;
 }
 
+void freeWorkFile(WorkFile *wf){
+	if(wf != NULL){
+		free(wf->name);
+		free(wf);
+	}
+}
+
 char* wfts(WorkFile* wf){
 /* permet de convertir un WorkFile en chaîne de caractères contenant 
 les différents champs séparés par des tabulations */
@@ -64,6 +71,18 @@ WorkTree* initWorkTree(){
 	wt->n = 0;
 
 	return wt;
+}
+
+void freeWorkTree(WorkTree* wt){
+	if(wt != NULL){
+		int i;
+		for(i = 0; i< wt->n; i++){
+			freeWorkFile(&wt->tab[i]);
+		}
+		free(wt->tab);
+		free(wt);
+	}
+
 }
 
 int inWorkTree(WorkTree* wt, char* name){
@@ -105,7 +124,6 @@ char* wtts(WorkTree* wt){
 	return res;
 }
 
-//WorkTree* stwt(char* ch){
 WorkTree* stwt(char* ch){
 
 	char name[255];
@@ -160,19 +178,17 @@ WorkTree* stwt(char* ch){
 	 donc on peut ommetre la taille de begin*/
 	content = strcpy(content,begin);
 
-	/*Mettre le marqueuf de fin de chaine car probleme si la prochaine chaine est plus petite que la précédente */
+	/*Mettre le marqueur de fin de chaine car probleme si la prochaine chaine est plus petite que la précédente */
 	//content[size_content+1] = '\0';
 	i = sscanf(content,"%s\t%s\t%s",name, hash, mode);
 
 	//Si ce n'est pas le bon format
 	if(i == 3){
-		//printf("%s %s %d\n", name, hash, atoi(mode));
-		//printf("content=%s\n",content);
-		//printf("mode=%d\n",atoi(mode));
+
 		appendWorkTree(wt,name, hash, atoi(mode));
 
 	}
-
+	free(content);
 	return wt;
 
 }

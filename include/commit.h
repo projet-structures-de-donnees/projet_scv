@@ -26,6 +26,7 @@ void freeKeyVal(kvp* kv);
 kvp* stkv(char* str);
 char* kvts(kvp* k);
 Commit* initCommit();
+void freeCommit(Commit* c);
 unsigned long sdbm(char *str);
 void commitSet(Commit* c, char* key, char* value);
 Commit* createCommit(char* hash);

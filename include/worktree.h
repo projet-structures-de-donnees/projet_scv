@@ -20,11 +20,13 @@ typedef struct {
 /* Exercice 4 – Fonctions de manipulation de base */
 /* MANIPULATION DE WORKFILE */
 WorkFile* createWorkFile(char* name);
+void freeWorkFile(WorkFile *wf);
 char* wfts(WorkFile* wf);
 WorkFile* stwf(char* ch);
 
 /* MANIPULATION DE WORKTREE */
 WorkTree* initWorkTree();
+void freeWorkTree(WorkTree* wt);
 int inWorkTree(WorkTree* wt, char* name);
 int appendWorkTree(WorkTree* wt, char* name, char* hash, int mode);
 char* wtts(WorkTree* wt);
