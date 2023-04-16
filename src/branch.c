@@ -235,6 +235,7 @@ void myGitCheckoutCommit(char* pattern){
 	}
 	if(listGet(list_commit, 1) != NULL){
 		printf("Précisez la requête du hash\n");
+		printf("%s\n",ltos(list_commit));
 		return;
 	}
 

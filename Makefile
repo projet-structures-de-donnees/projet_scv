@@ -1,55 +1,39 @@
 CC = gcc
 CFLAGS = -Wall -Iinclude
-SDIR = src
+SRC = src
+BIN = bin
 
-# Liste des fichiers source
-SRC_FILES = $(SDIR)/main.c $(SDIR)/test.c $(SDIR)/myGit.c $(SDIR)/branch.c $(SDIR)/commit.c $(SDIR)/instantane.c $(SDIR)/merge.c $(SDIR)/worktree.c
+
+# Création du répertoire "bin" s'il n'existe pas
+$(shell mkdir -p $(BIN))
+
+
+
+OBJ_FILES_TEST = $(BIN)/test.o $(BIN)/branch.o $(BIN)/commit.o $(BIN)/instantane.o $(BIN)/merge.o $(BIN)/worktree.o
+OBJ_FILES_MYGIT = $(BIN)/myGit.o $(BIN)/branch.o $(BIN)/commit.o $(BIN)/instantane.o $(BIN)/merge.o $(BIN)/worktree.o
 
 
 all : myGit
 		
 
+$(BIN)/test.o : $(SRC)/test.c 
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+test : $(OBJ_FILES_TEST)
+	$(CC) $^ $(CFLAGS) -o $@
 
 
 
-test.o : $(SDIR)/test.c 
-	$(CC) $(CFLAGS) -c -o test.o -c $(SDIR)/test.c
-
-test : test.o  branch.o commit.o instantane.o merge.o worktree.o
-	$(CC) $(CFLAGS) -o test test.o branch.o commit.o instantane.o merge.o worktree.o
+$(BIN)/%.o : $(SRC)/%.c
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 
-
-
-
-
-instantane.o: $(SDIR)/instantane.c
-	$(CC) $(CFLAGS) -c -o instantane.o $(SDIR)/instantane.c
-
-worktree.o: $(SDIR)/worktree.c
-	$(CC) $(CFLAGS) -c -o worktree.o $(SDIR)/worktree.c
-
-commit.o: $(SDIR)/commit.c
-	$(CC) $(CFLAGS) -c -o commit.o $(SDIR)/commit.c
-
-branch.o: $(SDIR)/branch.c
-	$(CC) $(CFLAGS) -c -o branch.o $(SDIR)/branch.c
-
-merge.o: $(SDIR)/merge.c
-	$(CC) $(CFLAGS) -c -o merge.o $(SDIR)/merge.c
-
-
-
-
-
-
-myGit.o :  $(SDIR)/myGit.c 
-	$(CC) $(CFLAGS) -c -o myGit.o -c $(SDIR)/myGit.c
-
-myGit: myGit.o branch.o commit.o instantane.o merge.o worktree.o
-	$(CC) $(CFLAGS) -o myGit myGit.o branch.o commit.o instantane.o merge.o worktree.o
+myGit: $(OBJ_FILES_MYGIT)
+	$(CC) $^ $(CFLAGS) -o $@ 
 
 
 
 clean :
-	rm -f *.o main test myGit
+	rm -f main test myGit
+	rm -r bin/
+	
