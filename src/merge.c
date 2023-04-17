@@ -119,18 +119,21 @@ List* merge(char* remote_branch, char* message){
 	//printf("Affichage last wt_de la branch:(%s)\n%s\n",remote_branch,wtts(wt_remote));
 
 	List* l_conflicts = initList(); 
+
+	// Fusion des deux branches
 	WorkTree *wt_fusion = mergeWorkTrees(wt_curr,wt_remote,&l_conflicts);
-	if(wt_fusion == NULL){
+	if(wt_fusion == NULL){ 
 		//printf("wt_fusion est à NULL\n");
 		return NULL;
 	}
-	if(*l_conflicts != NULL){// Si conflits
+	if(*l_conflicts != NULL){// Si conflits on les retournes
 		//printf("il y'a des conflits =%s\n",ltos(l_conflicts));
 		return l_conflicts;
 	}else{
 		//printf("Aucun conflits !!\n");
 	}
 
+	// Si pas de conflits
 	char* hash_wt_fusion = saveWorkTree(wt_fusion, ".");
 	Commit *commit = createCommit(hash_wt_fusion);
 	//free(hash_wt_fusion);
@@ -192,10 +195,11 @@ void createDeletionCommit(char * branch, List* conflicts,char * message ){
 	}
 
 	int i;
+	printf("Dans la branche %s:\n",new_curr_branch);
 	for (i = 0; i < wt_merge->n; i++){ 
 		//if(searchList(conflicts,wt_merge->tab[i].name) == NULL){ // Si le fichier/rep n'est pas dans la liste de conflit on l'ajoute
 		myGitAdd(wt_merge->tab[i].name); //On ajoute tous les workfile non conflictuel 
-		//printf("ajout dans le nv wt du nvx commit =%s\n",wt_merge->tab[i].name);
+		printf("ajout dans le commit de suppression: %s\n",wt_merge->tab[i].name);
 		//}
 	}
 

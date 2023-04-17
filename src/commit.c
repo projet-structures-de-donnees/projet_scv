@@ -242,7 +242,6 @@ void ctf(Commit* c, char* file){
 	while(i < c->size || trouve < c->n){
 		if (c->T[i] != NULL){
 			fprintf(f,"%s :%s\n",c->T[i]->key,c->T[i]->value);
-			//printf("%d\n",i);
 			trouve ++;
 		}
 		i++;
@@ -312,12 +311,10 @@ char* blobCommit(Commit* c){
 	char buff_touch[1500];
 	sprintf(buff_touch,"touch %s",chemin);
 	system(buff_touch);
-	
+
 	cp(chemin,fname);
 
-	char buffSup[1500];
-	sprintf(buffSup,"rm %s",fname);
-	system(buffSup);
+	remove(fname);
 
 	return hash_return;
 
@@ -373,9 +370,9 @@ void deleteRef(char* ref_name){
 		return ;
 	}
 	if(remove(buff_path_to_ref) == 0){
-		//printf("%s a ete supp !!! \n",ref_name);
+		printf("suppression de la référence %s\n",ref_name);
 	}else{
-		//printf("%s n'a pas ete supp !!! \n",ref_name);
+		printf("Error(deleteRef): %s n'a pas ete supp !!! \n",ref_name);
 		fclose(f);
 	}
 	return;

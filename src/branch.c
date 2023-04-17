@@ -193,10 +193,8 @@ void restoreCommit(char*hash_commit){
 
 void myGitCheckoutBranch(char* branch){
 	if(branch == NULL){
-		//printf("Cas - 0");
 		return;
 	}
-	//printf("Cas -1");
 
 	FILE* f = fopen(".current_branch","w");
 	if(f == NULL){
@@ -205,6 +203,7 @@ void myGitCheckoutBranch(char* branch){
 
 	fprintf(f,"%s",branch);
 	fclose(f);
+	printf("Déplacement dans %s\n",branch);
 
 	//printf("Cas -6");
 	createUpdateRef("HEAD",getRef(branch));

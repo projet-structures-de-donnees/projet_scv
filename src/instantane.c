@@ -42,9 +42,7 @@ char * sha256file(char* file){
 	fgets(buff,255,f);
 	fclose(f);
 	
-	char buffSup[1500];
-	sprintf(buffSup,"rm %s",fname);
-	system(buffSup);
+	remove(fname);
 
 	// Permet d'enlever les espaces et le tiret qui se trouve à la fin du buff
 	buff[40]='\0';
@@ -304,10 +302,6 @@ une lecture ligne par ligne du fichier source*/
 	if((to == NULL)||(from == NULL)){
 		return;
 	}
-	char buff_print[255];
-	sprintf(buff_print,"cat %s",from);
-	//printf("%s\n",buff_print);
-	system(buff_print);
 
 	if(! file_exists(from)){
 		return;
@@ -355,7 +349,7 @@ void blobFile(char* file){
 	repertoire[0]=hash[0];
 	repertoire[1]=hash[1];
 	repertoire[2]='\0';
-	//printf("%s\n",repertoire);
+
 	
 	char buff[255];
 	// Sinon on ne pourra pas utiliser touch 

@@ -45,23 +45,39 @@ int main(int argc, char** argv){
             return 1;
         }
         if((strcmp(argv[1],"create-ref") == 0) && (argc >=4)){
-            createUpdateRef(argv[2], argv[3]);
+            if( ftc(hashToPath(argv[3])) != NULL){
+                createUpdateRef(argv[2], argv[3]);
+            }else{
+                printf("Cette référence ne représente pas un commit\n");
+            }
             return 1;
         }
         if(strcmp(argv[1],"delete-ref") == 0){
-            deleteRef(argv[2]);
+            if((strcmp(argv[2],"master") == 0)  || (strcmp(argv[2],"HEAD") == 0)){
+                printf("%s ne peut pas être supprimé\n",argv[1]);
+            }else{
+                deleteRef(argv[2]);
+            }
             return 1;
         }
         if(strcmp(argv[1],"add") == 0){
             int i;
             for(i=2; i< argc; i++){
-                myGitAdd(argv[i]);
+                if(strcmp(argv[i], ".")==0){
+                    printf("Le répertoire courant %s ne peut pas etre pris en compte\n",argv[i]);
+                }else{
+                    myGitAdd(argv[i]);
+                }
             }
             return 1;
         }
         if(strcmp(argv[1],"list-add") == 0){
             WorkTree* wt = ftwt(".add");
-            printf("%s\n",wtts(wt));
+            if(wt != NULL){
+                for(int i = 0; i<wt->n; i++){
+                    printf("%s\n",wt->tab[i].name);
+                }
+            }
             return 1;
         }
         if(strcmp(argv[1],"clear-add") == 0){
@@ -72,7 +88,6 @@ int main(int argc, char** argv){
         if((strcmp(argv[1],"commit") == 0) && (argc >=3)){
             if(strcmp(argv[3],"-m") == 0){
                 myGitCommit(argv[2],argv[4]);
-
             }else{
                 myGitCommit(argv[2],NULL);
             }
@@ -115,8 +130,8 @@ int main(int argc, char** argv){
         }
         if(strcmp(argv[1],"merge") == 0  && (argc >= 3)){
             List *l_conflicts = merge(argv[2],argv[3]);
-
             if(l_conflicts != NULL){
+                printf("Les fichiers suivants sont en conflits: \n%s\n",ltos(l_conflicts));
                 int choix ;
                 printf("Conflits:\n");
                 printf("1- Garder les fichiers de la branche courante (%s) ?\n",getCurrentBranch());
