@@ -182,32 +182,30 @@ int main(int argc, char** argv){
                     while(elem != NULL){
                         printf("%s \t [1/2] ?\n",elem->data);
                         scanf("%d",&choix);
-                        if(choix == 1){ //current
+                        if(choix == 1){ //current 
                             printf("Choix 1\n");
                             *l_conflicts = (*l_conflicts)->next;
-                            insertFirst(l_branch,elem);
+                            insertFirst(l_current,elem);
                             elem = *l_conflicts;
                         }
                         if(choix == 2){//branch
                             printf("Choix 2\n");
                             *l_conflicts = (*l_conflicts)->next;
-                            insertFirst(l_current,elem);
+                            insertFirst(l_branch,elem);
                             elem = *l_conflicts;
                         }
                         i++;
-                        printf("Tours\n");
                     }
-                    printf("LA\n");
-                    printf("current :\n%s\n",ltos(l_current));
-                    printf("branch :\n%s\n",ltos(l_branch));
+                    //printf("current :\n%s\n",ltos(l_current));
+                    //printf("branch :\n%s\n",ltos(l_branch));
 
-                    createDeletionCommit(argv[2],l_branch,argv[3]);//Pour Garder dans la current
+                    createDeletionCommit(getCurrentBranch(),l_branch,argv[3]);// Supprime de current ce que l'on veux pas garder
                     if(merge(argv[2],argv[3]) != NULL){
-                        printf("premiere fusion ERRERUE\n");
+                        printf("fusion delete ERRERUE\n");
                     }
-                    createDeletionCommit(getCurrentBranch(),l_current,argv[3]);// pour garder dans la branch
+                    createDeletionCommit(argv[2],l_current,argv[3]);//Supprime de branch ce que l'on veux pas garder
                     if(merge(argv[2],argv[3]) != NULL){
-                        printf("deuxieme fusion ERREUR\n");
+                        printf("fusion merge ERREUR\n");
                     }
                     printf("Fusion réalisé\n");
                         
