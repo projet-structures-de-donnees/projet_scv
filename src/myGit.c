@@ -25,16 +25,23 @@
 
 int main(int argc, char** argv){
     if(argc < 2){
-        printf("\tmyGit init\n");
-        printf("\tmyGit list-refs\n");
-        printf("\tmyGit create-ref <name> <hash>\n");
-        printf("\tmyGit delete-ref <name>\n");
-        printf("\tmyGit add <elem> [<elem2> <elem3> ...]\n");
-        printf("\tmyGit list-add\n");
-        printf("\tmyGit clear-add\n");
-
         return -1;
     }else{
+        if(strcmp(argv[1],"--help") == 0){
+            printf("\tmyGit init\n");
+            printf("\tmyGit list-refs\n");
+            printf("\tmyGit create-ref <name> <hash>\n");
+            printf("\tmyGit delete-ref <name>\n");
+            printf("\tmyGit add <elem> [<elem2> <elem3> ...]\n");
+            printf("\tmyGit list-add\n");
+            printf("\tmyGit get-current-branch : affiche le nom de la branche courante.\n");
+            printf("\tmyGit branch <branch-name>:crée une branche <branch-name> \n");
+            printf("\tmyGit branch-print <branch-name> : affiche le hash de tous les commits de la branche\n");
+            printf("\tmyGit checkout-branch <branch-name>:réalise un déplacement sur la branche <branch-name>\n");
+            printf("\tmyGit checkout-commit <pattern> : réalise un déplacement sur le commit qui commence par <pattern>\n");
+            printf("\t/myGit merge <branch> <message> : réalise le merge entre la branche courante et <branch>\n");
+            return 1;
+        }
         if(strcmp(argv[1],"init") == 0){
             initRefs();
             initBranch();
@@ -141,7 +148,7 @@ int main(int argc, char** argv){
 
                 if(choix == 1){
                     List *l_conflicts2 = initList();
-                    createDeletionCommit(argv[2],l_conflicts2,argv[3]);
+                    createDeletionCommit(argv[2],l_conflicts,argv[3]);
                     l_conflicts2 = merge(argv[2],argv[3]);
                     if(l_conflicts2 == NULL){
                         printf("Fusion réalisé\n");
@@ -154,7 +161,7 @@ int main(int argc, char** argv){
                 if(choix == 2){
                     List *l_conflicts2 = initList();
                     createDeletionCommit(getCurrentBranch(),l_conflicts,argv[3]);
-                    l_conflicts2 = merge(getCurrentBranch(),argv[3]);
+                    l_conflicts2 = merge(argv[2],argv[3]);
                     if(l_conflicts2 == NULL){
                         printf("Fusion réalisé\n");
                     }else{
@@ -164,7 +171,46 @@ int main(int argc, char** argv){
                 }
 
                 if(choix == 3){
-                    // A continuer
+                    printf("Pour chaque fichiers/repertoires choisir la branches sur laquelles vous voulez garder la bonne versions\n");
+                    printf("pour la branche courante (%s) - 1\n",getCurrentBranch());
+                    printf("pour la branche distantes - 2\n");
+
+                    List* l_current = initList();
+                    List* l_branch = initList();
+                    int i = 0;
+                    Cell* elem = listGet(l_conflicts,i);
+                    while(elem != NULL){
+                        printf("%s \t [1/2] ?\n",elem->data);
+                        scanf("%d",&choix);
+                        if(choix == 1){ //current
+                            printf("Choix 1\n");
+                            *l_conflicts = (*l_conflicts)->next;
+                            insertFirst(l_branch,elem);
+                            elem = *l_conflicts;
+                        }
+                        if(choix == 2){//branch
+                            printf("Choix 2\n");
+                            *l_conflicts = (*l_conflicts)->next;
+                            insertFirst(l_current,elem);
+                            elem = *l_conflicts;
+                        }
+                        i++;
+                        printf("Tours\n");
+                    }
+                    printf("LA\n");
+                    printf("current :\n%s\n",ltos(l_current));
+                    printf("branch :\n%s\n",ltos(l_branch));
+
+                    createDeletionCommit(argv[2],l_branch,argv[3]);//Pour Garder dans la current
+                    if(merge(argv[2],argv[3]) != NULL){
+                        printf("premiere fusion ERRERUE\n");
+                    }
+                    createDeletionCommit(getCurrentBranch(),l_current,argv[3]);// pour garder dans la branch
+                    if(merge(argv[2],argv[3]) != NULL){
+                        printf("deuxieme fusion ERREUR\n");
+                    }
+                    printf("Fusion réalisé\n");
+                        
                     return 1;
                 }else{
                     printf("choix non existant\n");

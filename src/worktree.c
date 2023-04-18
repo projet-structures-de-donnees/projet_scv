@@ -367,7 +367,7 @@ void restoreWorkTree(WorkTree* wt, char* path){
 		if(wf_current->hash[nb_char-2] != '.'){// S'il sagit d'un fichier
 			cp(conc(path,wf_current->name),hashToPath(wf_current->hash));
 			setMode(wf_current->mode,conc(path,wf_current->name));
-			printf("Remise de %s\n",wf_current->name);
+			printf("restore de =name %s \nmode %d \n hash %s \n",wt->tab[i].name,wt->tab[i].mode,wt->tab[i].hash);
 
 		}else{
 			WorkTree* newWT = ftwt(hashToPath(wf_current->hash));

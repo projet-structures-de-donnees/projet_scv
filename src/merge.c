@@ -109,14 +109,14 @@ List* merge(char* remote_branch, char* message){
 	Commit *ct_curr = ftc(hashToPath(hash_last_commit_curr));
 	WorkTree *wt_curr = ftwt(hashToPath(commitGet(ct_curr,"tree")));
 	//freeCommit(ct_curr);
-	//printf("Affichage last wt_curr:(%s)\n%s\n",getCurrentBranch(),wtts(wt_curr));
+	printf("Affichage last wt_curr:(%s)\n%s\n",getCurrentBranch(),wtts(wt_curr));
 
 	//récupération du dernier wotkTree de la branche en parametre
 	char* hash_last_commit_remote = getRef(remote_branch);
 	Commit *ct_remote = ftc(hashToPath(hash_last_commit_remote));
 	WorkTree *wt_remote = ftwt(hashToPath(commitGet(ct_remote,"tree")));
 	//freeCommit(ct_remote);
-	//printf("Affichage last wt_de la branch:(%s)\n%s\n",remote_branch,wtts(wt_remote));
+	printf("Affichage last wt_de la branch:(%s)\n%s\n",remote_branch,wtts(wt_remote));
 
 	List* l_conflicts = initList(); 
 
@@ -126,16 +126,23 @@ List* merge(char* remote_branch, char* message){
 		//printf("wt_fusion est à NULL\n");
 		return NULL;
 	}
+	printf("worktree de fusion =\n%s\n",wtts(wt_fusion));
+
 	if(*l_conflicts != NULL){// Si conflits on les retournes
-		//printf("il y'a des conflits =%s\n",ltos(l_conflicts));
+		printf("il y'a des conflits =%s\n",ltos(l_conflicts));
 		return l_conflicts;
 	}else{
-		//printf("Aucun conflits !!\n");
+		printf("Aucun conflits !!\n");
 	}
 
 	// Si pas de conflits
+	restoreWorkTree(wt_fusion,".");
 	char* hash_wt_fusion = saveWorkTree(wt_fusion, ".");
+	printf("%s\n",hash_wt_fusion);
+
 	Commit *commit = createCommit(hash_wt_fusion);
+	printf("commit de fusion =\n%s\n",cts(commit));
+
 	//free(hash_wt_fusion);
 	commitSet(commit, "predecessor", hash_last_commit_curr);
 	//free(hash_last_commit_curr);
@@ -148,7 +155,7 @@ List* merge(char* remote_branch, char* message){
 
 	char *hash_commit = blobCommit(commit);
 	createUpdateRef(getCurrentBranch(), hash_commit); // On met a jour la ref de la branche
-	//printf("remote_branch a supp=%s\n",remote_branch);
+	printf("remote_branch a supp=%s\n",remote_branch);
 	deleteRef(remote_branch);
 	restoreCommit(hash_commit);
 	createUpdateRef("HEAD",hash_commit);
@@ -170,6 +177,22 @@ void createDeletionCommit(char * branch, List* conflicts,char * message ){
 	char * ref_current=getRef(current_branch);
 	Commit *ct_branch_current= ftc(hashToPath(ref_current));
 	WorkTree *wt_branch_current = ftwt(hashToPath(commitGet(ct_branch_current,"tree")));
+
+	if(strcmp(branch,current_branch) == 0){ //Commit de supression (Si on est dans master et on veux supp des fichier de master)
+		FILE *f = fopen(".add","w"); // Vide la zone de préparation
+		fclose(f);
+
+		for(int i =0; i<wt_branch_current->n; i++){
+			if(searchList(conflicts,wt_branch_current->tab[i].name) == NULL){
+				myGitAdd(wt_branch_current->tab[i].name); //On ajoute tous les workfile non conflictuel
+				printf("ajout dans le commit de suppression: %s\n",wt_branch_current->tab[i].name);
+
+			}
+		}
+		myGitCommit(current_branch,message);
+		return;
+	}
+	// Si on veux garder les fichier de la branche courante
 
 	// deplacement sur la branche en param
 	myGitCheckoutBranch(branch);

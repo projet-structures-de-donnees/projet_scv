@@ -409,6 +409,19 @@ void myGitAdd(char* file_or_folder){
 	if(file_or_folder == NULL){
 		return;
 	}
+	DIR *dir = opendir(file_or_folder); //Etre sur que le parametre existe
+		if(dir == NULL){
+			FILE* f = fopen(file_or_folder,"r");
+			if (f == NULL){
+				return;
+			}else{
+				fclose(f);
+			}
+			
+		}else{
+			closedir(dir);
+		}
+	
 	FILE* f = fopen(".add","r");
 	WorkTree* wt;
 	if (f == NULL) {
